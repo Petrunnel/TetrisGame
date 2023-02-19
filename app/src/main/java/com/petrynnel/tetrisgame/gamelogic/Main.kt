@@ -16,6 +16,8 @@ object Main {
     /** Был ли за последнюю итерацию запрошен поворот фигуры  */
     var isRotateRequested = false
 
+    var isDownToBottomRequested = false
+
     /** Было ли за последнюю итерацию запрошено ускорение падения */
     private var isBoostRequested = false
 
@@ -75,16 +77,21 @@ object Main {
             isRotateRequested = false
         }
 
+        if (isDownToBottomRequested) {
+            gameField.letFallDown(isDownToBottomRequested)
+            isDownToBottomRequested = false
+        }
+
         /* Падение фигуры вниз происходит если loopNumber % FRAMES_PER_MOVE == 0
          * Т.е. 1 раз за FRAMES_PER_MOVE итераций.
          */
-        if (loopNumber % (FRAMES_PER_MOVE / if (isBoostRequested) BOOST_MULTIPLIER else 1) == 0) gameField.letFallDown()
+        if (loopNumber % (FRAMES_PER_MOVE / if (isBoostRequested) BOOST_MULTIPLIER else 1) == 0)
+            gameField.letFallDown(isDownToBottomRequested)
 
-
-//        gameField.letFallDown()
         /* Увеличение номера итерации (по модулю FPM)*/
         loopNumber = (loopNumber + 1) % FRAMES_PER_MOVE
 
-        /* Если поле переполнено, игра закончена */endOfGame = endOfGame || gameField.isOverfilled
+        /* Если поле переполнено, игра закончена */
+        endOfGame = endOfGame || gameField.isOverfilled
     }
 }

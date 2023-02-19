@@ -46,7 +46,7 @@ class CanvasView @JvmOverloads constructor(
 
         scoreTextPaint.color = Color.LTGRAY
         scoreTextPaint.textSize = 100f
-        canvas?.drawText("score", 815f, 390f, scoreTextPaint)
+        canvas?.drawText(Main.getField().score.toString(), 815f, 390f, scoreTextPaint)
 
         levelTextPaint.color = Color.LTGRAY
         levelTextPaint.textSize = 100f
@@ -69,6 +69,23 @@ class CanvasView @JvmOverloads constructor(
                     figurePaint
                 )
             }
+        val figureGhost = Main.getField().figureGhost
+        figureGhost?.let {
+            figurePaint.alpha = 1000
+            setPaintColor(it.color)
+            for (i in 0 until it.coords.size) {
+                val blockXCoord = GAME_FIELD_WIDTH - (figureGhost.coords[i]!!.x + 1) * CELL_SIZE
+                val blockYCoord = GAME_FIELD_HEIGHT - (figureGhost.coords[i]!!.y + 1) * CELL_SIZE
+                canvas?.drawRect(
+                    blockXCoord + CELL_LEFT_OFFSET,
+                    blockYCoord + CELL_TOP_OFFSET,
+                    blockXCoord + CELL_RIGHT_OFFSET,
+                    blockYCoord + CELL_BOTTOM_OFFSET,
+                    figurePaint
+                )
+            }
+        }
+
         val figure: Figure = Main.getField().figure
             figurePaint.alpha = 1000
             setPaintColor(figure.color)
@@ -94,6 +111,7 @@ class CanvasView @JvmOverloads constructor(
             FigureColor.Z_FORM -> figurePaint.color = FigureColor.Z_FORM.color
             FigureColor.O_FORM -> figurePaint.color = FigureColor.O_FORM.color
             FigureColor.L_FORM -> figurePaint.color = FigureColor.L_FORM.color
+            FigureColor.SHADOW_BLOCK -> figurePaint.color = FigureColor.SHADOW_BLOCK.color
             else -> figurePaint.color = FigureColor.EMPTY_BLOCK.color
         }
     }

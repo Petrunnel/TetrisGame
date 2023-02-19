@@ -16,6 +16,11 @@ class GameField {
     lateinit var figure: Figure
         private set
 
+    var figureGhost: Figure? = null
+        private set
+
+    var score = 0
+
     init {
         spawnNewFigure()
         theField = Array(COUNT_CELLS_X) {
@@ -95,6 +100,7 @@ class GameField {
         }
         if (canShift) {
             figure.shift(shiftDirection)
+            ghostRefresh()
         }
     }
 
@@ -110,11 +116,20 @@ class GameField {
         }
         if (canRotate) {
             figure.rotate()
+            ghostRefresh()
         }
     }
 
-    fun letFallDown() {
-        val fallenCoords = figure.fallenCoords
+    private fun ghostRefresh() {
+        val figure = figure.clone()
+        while (canFall(figure.fallenCoords)) {
+            figure.fall()
+        }
+        figureGhost = figure.clone()
+        figureGhost!!.color = FigureColor.SHADOW_BLOCK
+    }
+
+    private fun canFall(fallenCoords: Array<Coord?>): Boolean {
         var canFall = true
         for (coord in fallenCoords) {
             if (coord!!.y < 0 || coord.y >= COUNT_CELLS_Y + OFFSET_TOP || coord.x < 0 || coord.x >= COUNT_CELLS_X
@@ -123,9 +138,19 @@ class GameField {
                 canFall = false
             }
         }
-        if (canFall) {
+        return canFall
+    }
+
+    fun letFallDown(isDownToBottom: Boolean) {
+        ghostRefresh()
+
+        while (isDownToBottom && canFall(figure.fallenCoords))
+            figure.fall()
+
+        if (canFall(figure.fallenCoords)) {
             figure.fall()
         } else {
+            figureGhost = null
             val figureCoords = figure.coords
 
             /* Флаг, говорящий о том, что после будет необходимо сместить линии вниз
@@ -144,9 +169,14 @@ class GameField {
                 haveToShiftLinesDown = tryDestroyLine(coord.y) || haveToShiftLinesDown
             }
 
-            /* Если это необходимо, смещаем линии на образовавшееся пустое место */if (haveToShiftLinesDown) shiftLinesDown()
+            /* Если это необходимо, смещаем линии на образовавшееся пустое место */
+            if (haveToShiftLinesDown) {
+                score++
+                shiftLinesDown()
+            }
 
-            /* Создаём новую фигуру взамен той, которую мы перенесли*/spawnNewFigure()
+            /* Создаём новую фигуру взамен той, которую мы перенесли*/
+            spawnNewFigure()
         }
     }
 
@@ -158,7 +188,8 @@ class GameField {
         /* Номер обнаруженной пустой линии (-1, если не обнаружена) */
         var fallTo = -1
 
-        /* Проверяем линии снизу вверх*/for (y in 0 until COUNT_CELLS_Y) {
+        /* Проверяем линии снизу вверх*/
+        for (y in 0 until COUNT_CELLS_Y) {
             if (fallTo == -1) { //Если пустот ещё не обнаружено
                 if (countFilledCellsInLine[y] == 0) fallTo = y //...пытаемся обнаружить (._.)
             } else { //А если обнаружено

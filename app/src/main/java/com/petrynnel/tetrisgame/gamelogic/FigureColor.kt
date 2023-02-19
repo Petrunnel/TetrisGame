@@ -6,7 +6,7 @@ import java.util.*
 enum class FigureColor(val color: Int) {
 
     EMPTY_BLOCK(Color.TRANSPARENT),
-    SHADOW_BLOCK(Color.parseColor("#101010")),
+    SHADOW_BLOCK(Color.parseColor("#202020")),
     I_FORM(Color.parseColor("#00FFFF")),
     O_FORM(Color.parseColor("#FFFF00")),
     T_FORM(Color.parseColor("#800080")),

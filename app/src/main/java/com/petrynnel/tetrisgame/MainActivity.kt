@@ -14,6 +14,7 @@ import com.petrynnel.tetrisgame.gamelogic.Constants.SWIPE_MIN_DISTANCE
 import com.petrynnel.tetrisgame.gamelogic.Constants.SWIPE_THRESHOLD_VELOCITY
 import com.petrynnel.tetrisgame.gamelogic.Main.endOfGame
 import com.petrynnel.tetrisgame.gamelogic.Main.initFields
+import com.petrynnel.tetrisgame.gamelogic.Main.isDownToBottomRequested
 import com.petrynnel.tetrisgame.gamelogic.Main.isRotateRequested
 import com.petrynnel.tetrisgame.gamelogic.Main.logic
 import com.petrynnel.tetrisgame.gamelogic.Main.shiftDirection
@@ -114,10 +115,7 @@ class MainActivity : AppCompatActivity() {
             try {
                 if (abs(e1.x - e2.x) > SWIPE_MAX_OFF_PATH) return false
                 if (e2.y - e1.y > SWIPE_MIN_DISTANCE && abs(velocityY) > SWIPE_THRESHOLD_VELOCITY)
-//                    while (!Falling.willLanding(1)) {
-//                        Falling.fallingStep()
-//                    }
-                    return false
+                    isDownToBottomRequested = true
             } catch (e: Exception) {
                 // nothing
             }

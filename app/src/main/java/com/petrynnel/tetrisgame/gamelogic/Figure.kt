@@ -1,6 +1,8 @@
 package com.petrynnel.tetrisgame.gamelogic
 
-class Figure @JvmOverloads constructor(
+import com.google.gson.Gson
+
+open class Figure @JvmOverloads constructor(
     private val metaPointCoords: Coord,
     private var currentRotation: RotationMode = RotationMode.NORMAL,
     private val form: FigureForm = FigureForm.randomForm
@@ -16,6 +18,11 @@ class Figure @JvmOverloads constructor(
 
     fun rotate() {
         currentRotation = RotationMode.getNextRotationFrom(currentRotation)
+    }
+
+    fun clone(): Figure {
+        val stringFigure = Gson().toJson(this, Figure::class.java)
+        return Gson().fromJson(stringFigure, Figure::class.java)
     }
 
     fun getShiftedCoords(direction: ShiftDirection?): Array<Coord?> {
@@ -46,6 +53,5 @@ class Figure @JvmOverloads constructor(
         metaPointCoords.y--
     }
 
-    val color: FigureColor
-        get() = form.color
+    var color: FigureColor = form.color
 }
