@@ -26,17 +26,15 @@ object Constants {
     const val BOOST_MULTIPLIER = 5
 
     /* Количество клеток, на которое в секунду смещается вниз фигура*/
-    const val MOVEDOWNS_PER_SECOND = 2
+    private const val MOVEDOWNS_PER_SECOND = 2
 
     /* Количество игровых циклов в секунду*/
-    const val FPS = 60
+    private const val FPS = 60
 
     /* Количество игровых циклов, за которое фигура сместится вниз на одну клетку */
     const val FRAMES_PER_MOVE = FPS / MOVEDOWNS_PER_SECOND
 
-    const val FRAME_TIME = 1000L / FPS
-    const val DEFAULT_GAME_SPEED = FRAME_TIME
-    const val FAST_DOWN_SPEED = DEFAULT_GAME_SPEED / BOOST_MULTIPLIER
+    const val DEFAULT_GAME_SPEED = 16L
 
     /* Количество линий, заполненных блоками в начале */
     const val BLOCKS_INITIAL_LEVEL = COUNT_CELLS_Y / 3
@@ -47,7 +45,6 @@ object Constants {
 
     /* Максимально возможная ширина фигуры */
     const val MAX_FIGURE_WIDTH = 4
-
 
     const val SWIPE_MIN_DISTANCE = 120
     const val SWIPE_MAX_OFF_PATH = 250

@@ -1,28 +1,28 @@
 package com.petrynnel.tetrisgame
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.petrynnel.tetrisgame.databinding.ActivityMainBinding
 import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_GAME_SPEED
-import com.petrynnel.tetrisgame.gamelogic.Constants.FAST_DOWN_SPEED
 import com.petrynnel.tetrisgame.gamelogic.Constants.SWIPE_MAX_OFF_PATH
 import com.petrynnel.tetrisgame.gamelogic.Constants.SWIPE_MIN_DISTANCE
 import com.petrynnel.tetrisgame.gamelogic.Constants.SWIPE_THRESHOLD_VELOCITY
+import com.petrynnel.tetrisgame.gamelogic.Main
 import com.petrynnel.tetrisgame.gamelogic.Main.endOfGame
 import com.petrynnel.tetrisgame.gamelogic.Main.initFields
+import com.petrynnel.tetrisgame.gamelogic.Main.isBoostRequested
 import com.petrynnel.tetrisgame.gamelogic.Main.isDownToBottomRequested
 import com.petrynnel.tetrisgame.gamelogic.Main.isRotateRequested
 import com.petrynnel.tetrisgame.gamelogic.Main.logic
 import com.petrynnel.tetrisgame.gamelogic.Main.shiftDirection
 import com.petrynnel.tetrisgame.gamelogic.ShiftDirection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.math.abs
 
 @SuppressLint("ClickableViewAccessibility")
@@ -33,7 +33,8 @@ class MainActivity : AppCompatActivity() {
     private var mDownX = 0F
     private var mDownY = 0F
     private var isActionRotate: Boolean = false
-    private var gameSpeed: Long = DEFAULT_GAME_SPEED
+    private var gameSpeed = DEFAULT_GAME_SPEED
+    private var job: Job? = null
 
     private val gestureDetector by lazy { GestureDetector(this, MyGestureDetector()) }
     private val gestureListener by lazy {
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                     return@OnTouchListener true
                 }
                 MotionEvent.ACTION_UP -> {
-                    gameSpeed = DEFAULT_GAME_SPEED
+                    isBoostRequested = false
                     if (isActionRotate) {
                         isRotateRequested = true
                         binding.canvas.invalidate()
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     if (deltaY > 160) {
                         isActionRotate = false
-                        gameSpeed = FAST_DOWN_SPEED
+                        isBoostRequested = true
                     }
                     return@OnTouchListener true
                 }
@@ -87,22 +88,54 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.canvas.setOnTouchListener(gestureListener)
-        game()
+        initFields()
+        setBest()
+
     }
 
-    private fun game() {
+    override fun onResume() {
+        super.onResume()
+        gameStart()
+    }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            initFields()
+    override fun onPause() {
+        gameStop()
+        super.onPause()
+    }
+
+    private fun gameStart() {
+        job = CoroutineScope(Dispatchers.IO).launch {
+
             // gameplay infinite
             while (!endOfGame) {
                 logic()
                 //game speed in millisecond
+                gameSpeed = Main.getField().gameSpeed
                 delay(gameSpeed)
                 binding.canvas.invalidate()
             }
+            resetBest()
         }
+    }
 
+    private fun gameStop() {
+        job?.cancel()
+        resetBest()
+    }
+
+    private fun setBest() {
+        val sharedPreference = getSharedPreferences("HIGH_SCORE", Context.MODE_PRIVATE)
+        Main.getField().best = sharedPreference.getInt("high_score", 0)
+    }
+
+    private fun resetBest() {
+        val sharedPreference = getSharedPreferences("HIGH_SCORE", Context.MODE_PRIVATE)
+        if (Main.getField().score > sharedPreference.getInt("high_score", 0)) {
+            val editor = sharedPreference.edit()
+            editor.putInt("high_score", Main.getField().score)
+            editor.apply()
+            Main.getField().best = sharedPreference.getInt("high_score", 0)
+        }
     }
 
     internal class MyGestureDetector : GestureDetector.SimpleOnGestureListener() {
@@ -117,7 +150,7 @@ class MainActivity : AppCompatActivity() {
                 if (e2.y - e1.y > SWIPE_MIN_DISTANCE && abs(velocityY) > SWIPE_THRESHOLD_VELOCITY)
                     isDownToBottomRequested = true
             } catch (e: Exception) {
-                // nothing
+                Log.e("MyGestureDetector", "$e")
             }
             return false
         }

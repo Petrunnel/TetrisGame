@@ -1,20 +1,19 @@
 package com.petrynnel.tetrisgame.gamelogic
 
-import android.graphics.Color
+import com.petrynnel.tetrisgame.R
 import java.util.*
 
 enum class FigureColor(val color: Int) {
 
-    EMPTY_BLOCK(Color.TRANSPARENT),
-    SHADOW_BLOCK(Color.parseColor("#202020")),
-    I_FORM(Color.parseColor("#00FFFF")),
-    O_FORM(Color.parseColor("#FFFF00")),
-    T_FORM(Color.parseColor("#800080")),
-    J_FORM(Color.parseColor("#0000FF")),
-    L_FORM(Color.parseColor("#FF8000")),
-    S_FORM(Color.parseColor("#00FF00")),
-    Z_FORM(Color.parseColor("#FF0000"));
-
+    EMPTY_BLOCK(android.R.color.transparent),
+    SHADOW_BLOCK(R.color.SHADOW_BLOCK),
+    I_FORM(R.color.I_FORM),
+    O_FORM(R.color.O_FORM),
+    T_FORM(R.color.T_FORM),
+    J_FORM(R.color.J_FORM),
+    L_FORM(R.color.L_FORM),
+    S_FORM(R.color.S_FORM),
+    Z_FORM(R.color.Z_FORM);
     companion object {
         private val colorByNumber = arrayOf(I_FORM, J_FORM, L_FORM, O_FORM, S_FORM, Z_FORM, T_FORM)
 

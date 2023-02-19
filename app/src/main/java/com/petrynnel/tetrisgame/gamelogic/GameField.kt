@@ -3,6 +3,7 @@ package com.petrynnel.tetrisgame.gamelogic
 import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCKS_INITIAL_LEVEL
 import com.petrynnel.tetrisgame.gamelogic.Constants.COUNT_CELLS_X
 import com.petrynnel.tetrisgame.gamelogic.Constants.COUNT_CELLS_Y
+import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_GAME_SPEED
 import com.petrynnel.tetrisgame.gamelogic.Constants.MAX_FIGURE_WIDTH
 import com.petrynnel.tetrisgame.gamelogic.Constants.MISSNG_BLOCKS_IN_INITIAL_LINE_MAX
 import com.petrynnel.tetrisgame.gamelogic.Constants.MISSNG_BLOCKS_IN_INITIAL_LINE_MIN
@@ -19,10 +20,22 @@ class GameField {
     var figureGhost: Figure? = null
         private set
 
+    var gameSpeed = DEFAULT_GAME_SPEED
+        private set
+
     var score = 0
+        private set
+
+    var best = 0
+
+    var level = 1
+        private set
+
+    var nextFigureForm: FigureForm = FigureForm.randomForm
 
     init {
         spawnNewFigure()
+
         theField = Array(COUNT_CELLS_X) {
             arrayOfNulls(COUNT_CELLS_Y + OFFSET_TOP)
         }
@@ -75,9 +88,16 @@ class GameField {
         }
     }
 
+    private fun generateNextFigureForm() = FigureForm.randomForm
+
     private fun spawnNewFigure() {
         val randomX = Random().nextInt(COUNT_CELLS_X - MAX_FIGURE_WIDTH)
         figure = Figure(Coord(randomX, COUNT_CELLS_Y + OFFSET_TOP - 1))
+    }
+
+    private fun spawnNewFigure(figureForm: FigureForm) {
+        val randomX = Random().nextInt(COUNT_CELLS_X - MAX_FIGURE_WIDTH)
+        figure = Figure(Coord(randomX, COUNT_CELLS_Y + OFFSET_TOP - 1), form = figureForm)
     }
 
     fun isEmpty(x: Int, y: Int): Boolean {
@@ -153,6 +173,9 @@ class GameField {
             figureGhost = null
             val figureCoords = figure.coords
 
+            /* Счетчик заполненных строк. Нужен для начисления очков.*/
+            var count = 0
+
             /* Флаг, говорящий о том, что после будет необходимо сместить линии вниз
              * (т.е. какая-то линия была уничтожена)
              */
@@ -163,28 +186,53 @@ class GameField {
                 /* Увеличиваем информацию о количестве статичных блоков в линии*/
                 countFilledCellsInLine[coord.y]++
 
+                /* Если строка заполненена то увеличиваем счетчик строк к удалению*/
+                if (countFilledCellsInLine[coord.y] == COUNT_CELLS_X)
+                    count++
+
                 /* Проверяем, полностью ли заполнена строка Y
                  * Если заполнена полностью, устанавливаем  haveToShiftLinesDown в true
                  */
                 haveToShiftLinesDown = tryDestroyLine(coord.y) || haveToShiftLinesDown
             }
-
-            /* Если это необходимо, смещаем линии на образовавшееся пустое место */
-            if (haveToShiftLinesDown) {
-                score++
+            /* начисляем очки за количество заполненных линий */
+            incScore(count)
+            /* Если это необходимо, смещаем линии на образовавшееся пустое место*/
+            if (haveToShiftLinesDown)
                 shiftLinesDown()
-            }
 
             /* Создаём новую фигуру взамен той, которую мы перенесли*/
-            spawnNewFigure()
+            spawnNewFigure(nextFigureForm)
+            nextFigureForm = generateNextFigureForm()
         }
+    }
+
+    private fun incScore(linesCount: Int) {
+        when (linesCount) {
+            1 -> score += 1
+            2 -> score += 3
+            3 -> score += 7
+            4 -> score += 15
+        }
+        nextLevel()
+    }
+
+    private fun nextLevel() {
+        level = when (score / 50) {
+            in 0..8 -> (score / 50) + 1
+            else -> 10
+        }
+        setGameSpeed()
+    }
+
+    private fun setGameSpeed() {
+        gameSpeed = DEFAULT_GAME_SPEED - level
     }
 
     /**
      * Если на поле есть полностю пустые линии, сдвигает вышестоящие непустые линии на их место.
      */
     private fun shiftLinesDown() {
-
         /* Номер обнаруженной пустой линии (-1, если не обнаружена) */
         var fallTo = -1
 
@@ -201,8 +249,8 @@ class GameField {
                         theField[x][y] = FigureColor.EMPTY_BLOCK
                     }
 
-                    /* Не забываем обновить мета-информацию*/countFilledCellsInLine[fallTo] =
-                        countFilledCellsInLine[y]
+                    /* Не забываем обновить мета-информацию*/
+                    countFilledCellsInLine[fallTo] = countFilledCellsInLine[y]
                     countFilledCellsInLine[y] = 0
 
                     /*

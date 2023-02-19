@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TetrisGame</string>
+    <string name="app_name">Tetris Game</string>
     <string name="best">Best</string>
     <string name="score">Score</string>
     <string name="level">Level</string>

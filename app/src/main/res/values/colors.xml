@@ -7,4 +7,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="SHADOW_BLOCK">#FF202020</color>
+    <color name="I_FORM">#FF00FFFF</color>
+    <color name="O_FORM">#FFFFFF00</color>
+    <color name="T_FORM">#FF800080</color>
+    <color name="J_FORM">#FF0000FF</color>
+    <color name="L_FORM">#FFFF8000</color>
+    <color name="S_FORM">#FF00FF00</color>
+    <color name="Z_FORM">#FFFF0000</color>
 </resources>

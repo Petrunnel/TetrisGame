@@ -19,7 +19,7 @@ object Main {
     var isDownToBottomRequested = false
 
     /** Было ли за последнюю итерацию запрошено ускорение падения */
-    private var isBoostRequested = false
+    var isBoostRequested = false
 
     /** Номер игровой итерации по модулю FRAMES_PER_MOVE.
      * Падение фигуры вниз происходит если loopNumber % FRAMES_PER_MOVE == 0
@@ -40,17 +40,6 @@ object Main {
         shiftDirection = ShiftDirection.AWAITING
         isRotateRequested = false
         gameField = GameField()
-    }
-
-    /**
-     * Чтение пользовательских команд. Их выполнение реализовано в logic().
-     */
-    private fun input() {
-//        keyboardModule.update()
-//        shiftDirection = keyboardModule.getShiftDirection()
-//        isRotateRequested = keyboardModule.wasRotateRequested()
-//        isBoostRequested = keyboardModule.wasBoostRequested()
-//        endOfGame = endOfGame || keyboardModule.wasEscPressed() || graphicsModule.isCloseRequested()
     }
 
     /**
@@ -78,15 +67,16 @@ object Main {
         }
 
         if (isDownToBottomRequested) {
-            gameField.letFallDown(isDownToBottomRequested)
+            gameField.letFallDown(isDownToBottom = true)
             isDownToBottomRequested = false
         }
 
         /* Падение фигуры вниз происходит если loopNumber % FRAMES_PER_MOVE == 0
          * Т.е. 1 раз за FRAMES_PER_MOVE итераций.
          */
-        if (loopNumber % (FRAMES_PER_MOVE / if (isBoostRequested) BOOST_MULTIPLIER else 1) == 0)
-            gameField.letFallDown(isDownToBottomRequested)
+        if (loopNumber % (FRAMES_PER_MOVE / if (isBoostRequested) BOOST_MULTIPLIER else 1) == 0) {
+            gameField.letFallDown(isDownToBottom = false)
+        }
 
         /* Увеличение номера итерации (по модулю FPM)*/
         loopNumber = (loopNumber + 1) % FRAMES_PER_MOVE
