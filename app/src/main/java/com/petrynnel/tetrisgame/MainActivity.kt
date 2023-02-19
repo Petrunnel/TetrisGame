@@ -8,6 +8,9 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.petrynnel.tetrisgame.databinding.ActivityMainBinding
 import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_GAME_SPEED
 import com.petrynnel.tetrisgame.gamelogic.Constants.SWIPE_MAX_OFF_PATH
@@ -59,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                 MotionEvent.ACTION_MOVE -> {
                     val deltaX: Float = motionEvent.rawX - mDownX
                     val deltaY: Float = motionEvent.rawY - mDownY
-                    if (abs(deltaX) > 80 && abs(deltaY) < 160) {
+                    if (abs(deltaX) > 50 && abs(deltaY) < 160) {
                         mDownX = motionEvent.rawX
                         isActionRotate = false
                         if (deltaX > 0) {
@@ -86,11 +89,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        hideSystemUI()
         binding.canvas.setOnTouchListener(gestureListener)
         initFields()
         setBest()
 
+    }
+
+    private fun hideSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, binding.root).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
+    private fun showSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowInsetsControllerCompat(window, binding.root).show(WindowInsetsCompat.Type.systemBars())
     }
 
     override fun onResume() {
