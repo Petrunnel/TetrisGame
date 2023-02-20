@@ -8,9 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="GRADIENT_START">#66FFFFFF</color>
+    <color name="GRADIENT_START">#A8FFEBEE</color>
     <color name="EMPTY_BLOCK">#00000000</color>
-    <color name="SHADOW_BLOCK">#FF202020</color>
+    <color name="SHADOW_BLOCK">#80AFAFAF</color>
     <color name="I_FORM">#FF00FFFF</color>
     <color name="O_FORM">#FFFFFF00</color>
     <color name="T_FORM">#FF800080</color>

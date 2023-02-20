@@ -30,6 +30,11 @@ class MyGestureDetector : GestureDetector.SimpleOnGestureListener() {
         return super.onSingleTapConfirmed(e)
     }
 
+    override fun onDoubleTap(e: MotionEvent): Boolean {
+        requestRotate()
+        return super.onDoubleTapEvent(e)
+    }
+
     override fun onDown(e: MotionEvent): Boolean {
         return true
     }

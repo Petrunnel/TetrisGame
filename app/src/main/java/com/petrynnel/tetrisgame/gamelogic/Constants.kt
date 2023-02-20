@@ -8,6 +8,17 @@ object Constants {
     const val CELL_BOTTOM_OFFSET = 76F
     const val CELL_LEFT_OFFSET = 1F
     const val CELL_RIGHT_OFFSET = 76F
+    const val NEXT_FIGURE_X = 1050F
+    const val NEXT_FIGURE_Y = 960F
+
+    const val COLOR_ALPHA_FIGURE = 255
+    const val COLOR_ALPHA_FIGURE_GHOST = 80
+
+    const val FIELD_TEXT_X = 850F
+    const val FIELD_TEXT_BEST_Y = 190F
+    const val FIELD_TEXT_SCORE_Y = 410F
+    const val FIELD_TEXT_LEVEL_Y = 635F
+    const val FIELD_TEXT_SIZE = 100F
 
     /* Количество ячеек на экране по горизонтали и вертикали */
     const val COUNT_CELLS_X = 10
@@ -46,7 +57,7 @@ object Constants {
     /* Максимально возможная ширина фигуры */
     const val MAX_FIGURE_WIDTH = 4
 
-    const val SWIPE_MIN_DISTANCE = 120
-    const val SWIPE_MAX_OFF_PATH = 250
+    const val SWIPE_MIN_DISTANCE = 560
+    const val SWIPE_MAX_OFF_PATH = 700
     const val SWIPE_THRESHOLD_VELOCITY = 200
 }
