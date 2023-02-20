@@ -4,4 +4,5 @@
     <string name="score">Score</string>
     <string name="level">Level</string>
     <string name="next">Next</string>
+    <string name="text_pause">PAUSE</string>
 </resources>

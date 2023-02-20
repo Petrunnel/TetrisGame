@@ -4,21 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="#000"
     tools:context=".MainActivity">
 
     <com.petrynnel.tetrisgame.CanvasView
         android:id="@+id/canvas"
-        android:layout_marginTop="32dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        tools:visibility="invisible" />
 
     <TextView
-        android:id="@+id/s"
+        android:id="@+id/tvBest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="310dp"
@@ -31,7 +31,7 @@
         app:layout_constraintTop_toTopOf="@+id/canvas" />
 
     <TextView
-        android:id="@+id/l"
+        android:id="@+id/tvScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -40,11 +40,11 @@
         android:text="@string/score"
         android:textColor="#FFFFFF"
         android:textSize="30sp"
-        app:layout_constraintStart_toStartOf="@+id/s"
-        app:layout_constraintTop_toBottomOf="@+id/s" />
+        app:layout_constraintStart_toStartOf="@+id/tvBest"
+        app:layout_constraintTop_toBottomOf="@+id/tvBest" />
 
     <TextView
-        android:id="@+id/score3"
+        android:id="@+id/tvLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -53,11 +53,11 @@
         android:text="@string/level"
         android:textColor="#FFFFFF"
         android:textSize="30sp"
-        app:layout_constraintStart_toStartOf="@+id/l"
-        app:layout_constraintTop_toBottomOf="@+id/l" />
+        app:layout_constraintStart_toStartOf="@+id/tvScore"
+        app:layout_constraintTop_toBottomOf="@+id/tvScore" />
 
     <TextView
-        android:id="@+id/score"
+        android:id="@+id/tvNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -66,7 +66,43 @@
         android:text="@string/next"
         android:textColor="#FFFFFF"
         android:textSize="30sp"
-        app:layout_constraintStart_toStartOf="@+id/l"
-        app:layout_constraintTop_toBottomOf="@+id/score3" />
+        app:layout_constraintStart_toStartOf="@+id/tvScore"
+        app:layout_constraintTop_toBottomOf="@+id/tvLevel" />
+
+    <com.petrynnel.tetrisgame.PlayPauseView
+        android:id="@+id/btnPause"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:srcCompat="@drawable/pause_to_play"
+        android:layout_margin="32dp"/>
+
+    <TextView
+        android:id="@+id/pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_pause"
+        android:textSize="40sp"
+        android:padding="32dp"
+        android:background="@drawable/bg_dialog"
+        android:textColor="@color/dialog_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        android:visibility="gone"
+        tools:visibility="visible"
+        >
+    </TextView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="290dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

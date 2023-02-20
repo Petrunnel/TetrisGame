@@ -8,6 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="GRADIENT_START">#66FFFFFF</color>
+    <color name="EMPTY_BLOCK">#00000000</color>
     <color name="SHADOW_BLOCK">#FF202020</color>
     <color name="I_FORM">#FF00FFFF</color>
     <color name="O_FORM">#FFFFFF00</color>
@@ -16,4 +18,13 @@
     <color name="L_FORM">#FFFF8000</color>
     <color name="S_FORM">#FF00FF00</color>
     <color name="Z_FORM">#FFFF0000</color>
+
+    <color name="dialog_background">#000000</color>
+    <color name="dialog_text">#80FFFFFF</color>
+    <color name="dialog_buttons_color">#C62828</color>
+    <color name="dialog_checkbox">#FFF</color>
+    <color name="dialog_checkbox_activated">#FF0000</color>
+    <color name="dialog_list_item">#FFF</color>
+    <color name="dialog_accent_button">#80FFFFFF</color>
+    <color name="dialog_button">#80FFFFFF</color>
 </resources>

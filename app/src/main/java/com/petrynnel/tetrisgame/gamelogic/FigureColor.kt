@@ -5,7 +5,7 @@ import java.util.*
 
 enum class FigureColor(val color: Int) {
 
-    EMPTY_BLOCK(android.R.color.transparent),
+    EMPTY_BLOCK(R.color.EMPTY_BLOCK),
     SHADOW_BLOCK(R.color.SHADOW_BLOCK),
     I_FORM(R.color.I_FORM),
     O_FORM(R.color.O_FORM),
