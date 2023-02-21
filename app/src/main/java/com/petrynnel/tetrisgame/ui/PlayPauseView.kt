@@ -1,10 +1,11 @@
-package com.petrynnel.tetrisgame
+package com.petrynnel.tetrisgame.ui
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.AttrRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
+import com.petrynnel.tetrisgame.R
 
 
 class PlayPauseView : AppCompatImageView {

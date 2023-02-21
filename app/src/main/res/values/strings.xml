@@ -5,4 +5,7 @@
     <string name="level">Level</string>
     <string name="next">Next</string>
     <string name="text_pause">PAUSE</string>
+    <string name="game_over">GAME OVER</string>
+    <string name="restart">Restart</string>
+    <string name="exit">Exit</string>
 </resources>

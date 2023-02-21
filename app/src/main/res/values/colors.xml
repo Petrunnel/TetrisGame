@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
@@ -21,10 +20,4 @@
 
     <color name="dialog_background">#000000</color>
     <color name="dialog_text">#80FFFFFF</color>
-    <color name="dialog_buttons_color">#C62828</color>
-    <color name="dialog_checkbox">#FFF</color>
-    <color name="dialog_checkbox_activated">#FF0000</color>
-    <color name="dialog_list_item">#FFF</color>
-    <color name="dialog_accent_button">#80FFFFFF</color>
-    <color name="dialog_button">#80FFFFFF</color>
 </resources>

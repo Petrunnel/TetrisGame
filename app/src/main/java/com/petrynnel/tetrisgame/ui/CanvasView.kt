@@ -1,4 +1,4 @@
-package com.petrynnel.tetrisgame
+package com.petrynnel.tetrisgame.ui
 
 import android.content.Context
 import android.graphics.*
@@ -6,7 +6,9 @@ import android.graphics.Paint.ANTI_ALIAS_FLAG
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.res.ResourcesCompat.getColor
-import com.petrynnel.tetrisgame.MainActivity.Companion.getField
+import com.petrynnel.tetrisgame.R
+import com.petrynnel.tetrisgame.ui.MainActivity.Companion.getField
+import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCK_CORNER_RADIUS
 import com.petrynnel.tetrisgame.gamelogic.Constants.CELL_BOTTOM_OFFSET
 import com.petrynnel.tetrisgame.gamelogic.Constants.CELL_LEFT_OFFSET
 import com.petrynnel.tetrisgame.gamelogic.Constants.CELL_RIGHT_OFFSET
@@ -16,6 +18,11 @@ import com.petrynnel.tetrisgame.gamelogic.Constants.COLOR_ALPHA_FIGURE
 import com.petrynnel.tetrisgame.gamelogic.Constants.COLOR_ALPHA_FIGURE_GHOST
 import com.petrynnel.tetrisgame.gamelogic.Constants.COUNT_CELLS_X
 import com.petrynnel.tetrisgame.gamelogic.Constants.COUNT_CELLS_Y
+import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_BOUND_BOTTOM
+import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_BOUND_LEFT
+import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_BOUND_RIGHT
+import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_BOUND_TOP
+import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_BOUND_WIDTH
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_TEXT_BEST_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_TEXT_LEVEL_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_TEXT_SCORE_Y
@@ -32,9 +39,7 @@ import com.petrynnel.tetrisgame.gamelogic.FigureColor
 import com.petrynnel.tetrisgame.gamelogic.GameField
 
 class CanvasView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
     private val figurePaint = Paint(ANTI_ALIAS_FLAG)
@@ -45,13 +50,24 @@ class CanvasView @JvmOverloads constructor(
         super.onDraw(canvas)
         val field = getField()
 
-        levelPaint.style = Paint.Style.STROKE
-        levelPaint.strokeWidth = 1f
-        levelPaint.color = Color.GRAY
-        canvas.drawRect(1f, 1f, 797f, 1597f, levelPaint)
+        levelPaint.apply {
+            style = Paint.Style.STROKE
+            strokeWidth = FIELD_BOUND_WIDTH
+            color = Color.GRAY
+        }
 
-        textPaint.color = Color.LTGRAY
-        textPaint.textSize = FIELD_TEXT_SIZE
+        canvas.drawRect(
+            FIELD_BOUND_LEFT,
+            FIELD_BOUND_TOP,
+            FIELD_BOUND_RIGHT,
+            FIELD_BOUND_BOTTOM,
+            levelPaint
+        )
+
+        textPaint.apply {
+            color = Color.LTGRAY
+            textSize = FIELD_TEXT_SIZE
+        }
         val best = maxOf(field.best, field.score)
 
         canvas.drawText(best.toString(), FIELD_TEXT_X, FIELD_TEXT_BEST_Y, textPaint)
@@ -88,16 +104,15 @@ class CanvasView @JvmOverloads constructor(
 
     private fun generateNextFigure() = Figure(Coord(0, 0), form = getField().nextFigureForm)
 
-    private fun drawGameField(canvas: Canvas, field: GameField, paint: Paint ) {
+    private fun drawGameField(canvas: Canvas, field: GameField, paint: Paint) {
         val gameField = field.getTheField()
-        for (x in 0 until COUNT_CELLS_X)
-            for (y in 0 until COUNT_CELLS_Y + OFFSET_TOP) {
-                setPaintColor(gameField[x][y])
-                val blockXCoord = GAME_FIELD_WIDTH - (x + 1) * CELL_SIZE
-                val blockYCoord = GAME_FIELD_HEIGHT - (y + 1) * CELL_SIZE
-                paint.shader = shader(blockXCoord, blockYCoord, paint)
-                drawBlock(canvas, blockXCoord, blockYCoord, paint)
-            }
+        for (x in 0 until COUNT_CELLS_X) for (y in 0 until COUNT_CELLS_Y + OFFSET_TOP) {
+            setPaintColor(gameField[x][y])
+            val blockXCoord = GAME_FIELD_WIDTH - (x + 1) * CELL_SIZE
+            val blockYCoord = GAME_FIELD_HEIGHT - (y + 1) * CELL_SIZE
+            paint.shader = shader(blockXCoord, blockYCoord, paint)
+            drawBlock(canvas, blockXCoord, blockYCoord, paint)
+        }
     }
 
     private fun drawFigure(
@@ -140,8 +155,8 @@ class CanvasView @JvmOverloads constructor(
             y + CELL_TOP_OFFSET,
             x + CELL_RIGHT_OFFSET,
             y + CELL_BOTTOM_OFFSET,
-            20F,
-            20F,
+            BLOCK_CORNER_RADIUS,
+            BLOCK_CORNER_RADIUS,
             paint
         )
     }

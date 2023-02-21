@@ -11,9 +11,7 @@ import com.petrynnel.tetrisgame.gamelogic.Constants.OFFSET_TOP
 import java.util.*
 
 class GameField {
-    private val theField: Array<Array<FigureColor?>>
 
-    private val countFilledCellsInLine: IntArray
     lateinit var figure: Figure
         private set
 
@@ -23,15 +21,29 @@ class GameField {
     var gameSpeed = DEFAULT_GAME_SPEED
         private set
 
+    var best = 0
+
     var score = 0
         private set
-
-    var best = 0
 
     var level = 1
         private set
 
     var nextFigureForm: FigureForm = FigureForm.randomForm
+        private set
+
+    /* Есть ли в невидимой зоне над полем статичные блоки */
+    val isOverfilled: Boolean
+        get() {
+            var ret = false
+            for (i in 0 until OFFSET_TOP) {
+                if (countFilledCellsInLine[COUNT_CELLS_Y + i] != 0) ret = true
+            }
+            return ret
+        }
+
+    private val theField: Array<Array<FigureColor?>>
+    private val countFilledCellsInLine: IntArray
 
     init {
         spawnNewFigure()
@@ -88,22 +100,6 @@ class GameField {
         }
     }
 
-    private fun generateNextFigureForm() = FigureForm.randomForm
-
-    private fun spawnNewFigure() {
-        val randomX = Random().nextInt(COUNT_CELLS_X - MAX_FIGURE_WIDTH)
-        figure = Figure(Coord(randomX, COUNT_CELLS_Y + OFFSET_TOP - 1))
-    }
-
-    private fun spawnNewFigure(figureForm: FigureForm) {
-        val randomX = Random().nextInt(COUNT_CELLS_X - MAX_FIGURE_WIDTH)
-        figure = Figure(Coord(randomX, COUNT_CELLS_Y + OFFSET_TOP - 1), form = figureForm)
-    }
-
-    fun isEmpty(x: Int, y: Int): Boolean {
-        return theField[x][y] == FigureColor.EMPTY_BLOCK
-    }
-
     fun getTheField(): Array<Array<FigureColor?>> {
         return theField
     }
@@ -138,27 +134,6 @@ class GameField {
             figure.rotate()
             ghostRefresh()
         }
-    }
-
-    private fun ghostRefresh() {
-        val figure = figure.clone()
-        while (canFall(figure.fallenCoords)) {
-            figure.fall()
-        }
-        figureGhost = figure.clone()
-        figureGhost!!.color = FigureColor.SHADOW_BLOCK
-    }
-
-    private fun canFall(fallenCoords: Array<Coord?>): Boolean {
-        var canFall = true
-        for (coord in fallenCoords) {
-            if (coord!!.y < 0 || coord.y >= COUNT_CELLS_Y + OFFSET_TOP || coord.x < 0 || coord.x >= COUNT_CELLS_X
-                || !isEmpty(coord.x, coord.y)
-            ) {
-                canFall = false
-            }
-        }
-        return canFall
     }
 
     fun letFallDown(isDownToBottom: Boolean) {
@@ -207,6 +182,44 @@ class GameField {
         }
     }
 
+    private fun generateNextFigureForm() = FigureForm.randomForm
+
+    private fun spawnNewFigure() {
+        val randomX = Random().nextInt(COUNT_CELLS_X - MAX_FIGURE_WIDTH)
+        figure = Figure(Coord(randomX, COUNT_CELLS_Y + OFFSET_TOP - 1))
+    }
+
+    private fun spawnNewFigure(figureForm: FigureForm) {
+        val randomX = Random().nextInt(COUNT_CELLS_X - MAX_FIGURE_WIDTH)
+        figure = Figure(Coord(randomX, COUNT_CELLS_Y + OFFSET_TOP - 1), form = figureForm)
+    }
+
+    private fun isEmpty(x: Int, y: Int): Boolean {
+        return theField[x][y] == FigureColor.EMPTY_BLOCK
+    }
+
+    private fun ghostRefresh() {
+        val figure = figure.clone()
+        while (canFall(figure.fallenCoords)) {
+            figure.fall()
+        }
+        figureGhost = figure.clone()
+        figureGhost!!.color = FigureColor.SHADOW_BLOCK
+    }
+
+    /* Проверяем может ли фигура сдвинуться вниз на один блок*/
+    private fun canFall(fallenCoords: Array<Coord?>): Boolean {
+        var canFall = true
+        for (coord in fallenCoords) {
+            if (coord!!.y < 0 || coord.y >= COUNT_CELLS_Y + OFFSET_TOP || coord.x < 0 || coord.x >= COUNT_CELLS_X
+                || !isEmpty(coord.x, coord.y)
+            ) {
+                canFall = false
+            }
+        }
+        return canFall
+    }
+
     private fun incScore(linesCount: Int) {
         when (linesCount) {
             1 -> score += 1
@@ -229,9 +242,7 @@ class GameField {
         gameSpeed = DEFAULT_GAME_SPEED - level
     }
 
-    /**
-     * Если на поле есть полностю пустые линии, сдвигает вышестоящие непустые линии на их место.
-     */
+    /*Если на поле есть полностю пустые линии, сдвигает вышестоящие непустые линии на их место. */
     private fun shiftLinesDown() {
         /* Номер обнаруженной пустой линии (-1, если не обнаружена) */
         var fallTo = -1
@@ -263,12 +274,7 @@ class GameField {
         }
     }
 
-    /**
-     * Если линия полностю заполнена, уничтожает её (но не сдвигает остальные!)
-     *
-     * @param y Номер проверяемой линии
-     * @return Была ли линия уничтожена
-     */
+    /* Если линия полностю заполнена, уничтожает её (но не сдвигает остальные!) */
     private fun tryDestroyLine(y: Int): Boolean {
         if (countFilledCellsInLine[y] < COUNT_CELLS_X) {
             return false
@@ -281,16 +287,4 @@ class GameField {
         countFilledCellsInLine[y] = 0
         return true
     }
-
-    /**
-     * @return Есть ли в невидимой зоне над полем статичные блоки
-     */
-    val isOverfilled: Boolean
-        get() {
-            var ret = false
-            for (i in 0 until OFFSET_TOP) {
-                if (countFilledCellsInLine[COUNT_CELLS_Y + i] != 0) ret = true
-            }
-            return ret
-        }
 }

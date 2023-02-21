@@ -1,10 +1,10 @@
-package com.petrynnel.tetrisgame
+package com.petrynnel.tetrisgame.ui
 
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
-import com.petrynnel.tetrisgame.MainActivity.Companion.requestDownToBottom
-import com.petrynnel.tetrisgame.MainActivity.Companion.requestRotate
+import com.petrynnel.tetrisgame.ui.MainActivity.Companion.requestDownToBottom
+import com.petrynnel.tetrisgame.ui.MainActivity.Companion.requestRotate
 import com.petrynnel.tetrisgame.gamelogic.Constants
 import kotlin.math.abs
 

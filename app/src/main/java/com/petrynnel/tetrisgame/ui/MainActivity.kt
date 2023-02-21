@@ -1,4 +1,4 @@
-package com.petrynnel.tetrisgame
+package com.petrynnel.tetrisgame.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,38 +6,26 @@ import android.os.Bundle
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.petrynnel.tetrisgame.databinding.ActivityMainBinding
 import com.petrynnel.tetrisgame.gamelogic.*
+import com.petrynnel.tetrisgame.gamelogic.Constants.BOOST_MULTIPLIER
 import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_GAME_SPEED
+import com.petrynnel.tetrisgame.gamelogic.Constants.FRAMES_PER_MOVE
 import kotlinx.coroutines.*
 import kotlin.math.abs
 
 @SuppressLint("ClickableViewAccessibility")
 class MainActivity : AppCompatActivity() {
-    companion object {
-        /** Флаг для завершения основного цикла программы  */
-        private var endOfGame = false
 
-        /** Игровое поле. См. документацию GameField  */
+    companion object {
         private lateinit var gameField: GameField
 
-        /** Направление для сдвига, полученное за последнюю итерацию  */
+        private var endOfGame = false
         private var shiftDirection: ShiftDirection? = null
-
-        /** Был ли за последнюю итерацию запрошен поворот фигуры  */
         private var isRotateRequested = false
-
         private var isDownToBottomRequested = false
-
-        /** Было ли за последнюю итерацию запрошено ускорение падения */
         private var isBoostRequested = false
-
-        /** Номер игровой итерации по модулю FRAMES_PER_MOVE.
-         * Падение фигуры вниз происходит если loopNumber % FRAMES_PER_MOVE == 0
-         * Т.е. 1 раз за FRAMES_PER_MOVE итераций.
-         */
         private var loopNumber = 0
 
         fun requestRotate() {
@@ -48,13 +36,8 @@ class MainActivity : AppCompatActivity() {
             isDownToBottomRequested = true
         }
 
-        fun getField(): GameField {
-            return gameField
-        }
+        fun getField(): GameField = gameField
 
-        /**
-         * Задаёт значения полей для начала игры
-         */
         fun initFields() {
             loopNumber = 0
             endOfGame = false
@@ -63,11 +46,6 @@ class MainActivity : AppCompatActivity() {
             gameField = GameField()
         }
 
-        /**
-         * Здесь происходят основные игровые действия --
-         * запросы пользователя передаются на исполнение,
-         * обновляется игровое поле (и фигура)
-         */
         fun logic() {
 
             if (shiftDirection != ShiftDirection.AWAITING) { // Если есть запрос на сдвиг фигуры
@@ -87,20 +65,23 @@ class MainActivity : AppCompatActivity() {
                 isRotateRequested = false
             }
 
-            if (isDownToBottomRequested) {
+            if (isDownToBottomRequested) { //Если есть запрос на мгновенное падение фигуры
+                /*Сдвигаем фигуру до низа*/
                 gameField.letFallDown(isDownToBottom = true)
+                /* Ожидаем нового запроса */
                 isDownToBottomRequested = false
             }
 
             /* Падение фигуры вниз происходит если loopNumber % FRAMES_PER_MOVE == 0
-             * Т.е. 1 раз за FRAMES_PER_MOVE итераций.
+             * Т.е. 1 раз за FRAMES_PER_MOVE итераций или
+             * FRAMES_PER_MOVE / BOOST_MULTIPLIER если есть запрос на ускорение падения
              */
-            if (loopNumber % (Constants.FRAMES_PER_MOVE / if (isBoostRequested) Constants.BOOST_MULTIPLIER else 1) == 0) {
+            if (loopNumber % (FRAMES_PER_MOVE / if (isBoostRequested) BOOST_MULTIPLIER else 1) == 0) {
                 gameField.letFallDown(isDownToBottom = false)
             }
 
             /* Увеличение номера итерации (по модулю FPM)*/
-            loopNumber = (loopNumber + 1) % Constants.FRAMES_PER_MOVE
+            loopNumber = (loopNumber + 1) % FRAMES_PER_MOVE
 
             /* Если поле переполнено, игра закончена */
             endOfGame = endOfGame || gameField.isOverfilled
@@ -158,19 +139,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.canvas.setOnTouchListener(gestureListener)
-        binding.btnPause.setOnClickListener {
-            binding.btnPause.changeState()
-            if (binding.btnPause.isPaused()) {
-                gameStop()
-                binding.pause.visibility = View.VISIBLE
-            } else {
-                gameStart()
-                binding.pause.visibility = View.GONE
-            }
-        }
-        initFields()
-        setBest()
+
+        initGame()
     }
 
     override fun onResume() {
@@ -186,37 +156,35 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    private fun gameRestart() {
-        gameStop()
-        initFields()
-        setBest()
-        gameStart()
+    private fun initControls() {
+        with(binding) {
+            canvas.setOnTouchListener(gestureListener)
+            btnPause.setOnClickListener {
+                btnPause.changeState()
+                if (btnPause.isPaused()) {
+                    gameStop()
+                    pause.visibility = View.VISIBLE
+                } else {
+                    gameStart()
+                    pause.visibility = View.GONE
+                }
+            }
+        }
     }
 
-    private fun showEndGameAlertDialog() {
-        AlertDialog
-            .Builder(this, R.style.YDialog)
-            .setTitle("Game Over")
-            .setCancelable(false)
-            .setNegativeButton("Exit") { dialog, _ ->
-                dialog.cancel()
-                this.finish()
-            }
-            .setPositiveButton("Restart Game") { dialog, _ ->
-                gameRestart()
-                dialog.dismiss()
-            }
-            .show()
+    private fun initGame() {
+        initControls()
+        initFields()
+        setBest()
     }
 
     private fun gameStart() {
         binding.btnPause.setState(PlayPauseView.STATE_PLAY)
         job = CoroutineScope(Dispatchers.IO).launch {
 
-            // gameplay infinite
+            /* Основной цикл игры*/
             while (!endOfGame) {
                 logic()
-                //game speed in millisecond
                 gameSpeed = getField().gameSpeed
                 delay(gameSpeed)
                 binding.canvas.invalidate()
@@ -224,16 +192,37 @@ class MainActivity : AppCompatActivity() {
             withContext(NonCancellable) {
                 CoroutineScope(Dispatchers.Main).launch {
                     resetBest()
-                    showEndGameAlertDialog()
+                    showGameOver()
                 }
             }
         }
-
     }
 
     private fun gameStop() {
         job?.cancel()
         resetBest()
+    }
+
+    private fun gameRestart() {
+        gameStop()
+        initFields()
+        setBest()
+        gameStart()
+    }
+
+    private fun showGameOver() {
+        with(binding) {
+            btnPause.visibility = View.GONE
+            gameOver.visibility = View.VISIBLE
+            btnRestart.setOnClickListener {
+                gameRestart()
+                btnPause.visibility = View.VISIBLE
+                gameOver.visibility = View.GONE
+            }
+            btnExit.setOnClickListener {
+                this@MainActivity.finish()
+            }
+        }
     }
 
     private fun setBest() {

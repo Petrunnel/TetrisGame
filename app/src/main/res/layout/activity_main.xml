@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000"
-    tools:context=".MainActivity">
+    tools:context=".ui.MainActivity">
 
-    <com.petrynnel.tetrisgame.CanvasView
+    <com.petrynnel.tetrisgame.ui.CanvasView
         android:id="@+id/canvas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,33 +69,82 @@
         app:layout_constraintStart_toStartOf="@+id/tvScore"
         app:layout_constraintTop_toBottomOf="@+id/tvLevel" />
 
-    <com.petrynnel.tetrisgame.PlayPauseView
+    <com.petrynnel.tetrisgame.ui.PlayPauseView
         android:id="@+id/btnPause"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/pause_to_play"
-        android:layout_margin="32dp"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/pause_to_play" />
 
     <TextView
         android:id="@+id/pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_pause"
-        android:textSize="40sp"
-        android:padding="32dp"
         android:background="@drawable/bg_dialog"
+        android:padding="32dp"
+        android:text="@string/text_pause"
         android:textColor="@color/dialog_text"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        android:textSize="40sp"
         android:visibility="gone"
-        tools:visibility="visible"
-        >
-    </TextView>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/gameOver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_dialog"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        tools:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:padding="32dp"
+            android:text="@string/game_over"
+            android:textColor="@color/dialog_text"
+            android:textSize="40sp" />
+
+        <Button
+            android:id="@+id/btnRestart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/black"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/restart"
+            android:textColor="@color/dialog_text"
+            android:textSize="30sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="@color/black"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/exit"
+            android:textColor="@color/dialog_text"
+            android:textSize="30sp" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
