@@ -109,7 +109,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 MotionEvent.ACTION_UP -> {
                     isBoostRequested = false
-                    binding.canvas.invalidate()
+                    if (!endOfGame)
+                        binding.canvas.invalidate()
                     return@OnTouchListener true
                 }
 
@@ -222,6 +223,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showGameOver() {
         with(binding) {
+            gameStop()
             btnPause.visibility = View.GONE
             gameOver.visibility = View.VISIBLE
             resetSavedField()
@@ -240,7 +242,7 @@ class MainActivity : AppCompatActivity() {
         with(binding) {
             gameStop()
             btnPause.visibility = View.GONE
-            continueGame.visibility= View.VISIBLE
+            continueGame.visibility = View.VISIBLE
             btnContinue.setOnClickListener {
                 gameStart()
                 btnPause.visibility = View.VISIBLE
@@ -256,16 +258,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun setBest() {
         val sharedPreference = getSharedPreferences("HIGH_SCORE", Context.MODE_PRIVATE)
-        getField().best = sharedPreference.getInt("high_score", 0)
+        val gson = Gson()
+        val json = sharedPreference.getString("high_score", gson.toJson(IntArray(10)))
+        val bestScores = gson.fromJson(json, IntArray::class.java)
+        getField().best = bestScores.max()
     }
 
     private fun resetBest() {
         val sharedPreference = getSharedPreferences("HIGH_SCORE", Context.MODE_PRIVATE)
-        if (getField().score > sharedPreference.getInt("high_score", 0)) {
+        val gson = Gson()
+        var json = sharedPreference.getString("high_score", gson.toJson(IntArray(10)))
+        val bestScores = gson.fromJson(json, IntArray::class.java)
+        val minBestScore = bestScores.min()
+        if (getField().score > minBestScore && !bestScores.contains(getField().score)) {
+            bestScores[bestScores.indexOf(minBestScore)] = getField().score
             val editor = sharedPreference.edit()
-            editor.putInt("high_score", getField().score)
+            json = gson.toJson(bestScores)
+            editor.putString("high_score", json)
             editor.apply()
-            getField().best = sharedPreference.getInt("high_score", 0)
+            getField().best = bestScores.max()
         }
     }
 
@@ -281,7 +292,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadField() {
         val sharedPreference = getSharedPreferences("GAME_FIELD", Context.MODE_PRIVATE)
         val gson = Gson()
-        val json = sharedPreference.getString("game_field","")
+        val json = sharedPreference.getString("game_field", "")
         gameField = gson.fromJson(json, GameField::class.java)
     }
 
@@ -292,5 +303,4 @@ class MainActivity : AppCompatActivity() {
         editor.apply()
         gameField = null
     }
-
 }
