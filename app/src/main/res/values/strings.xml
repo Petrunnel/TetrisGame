@@ -4,8 +4,14 @@
     <string name="score">Score</string>
     <string name="level">Level</string>
     <string name="next">Next</string>
-    <string name="text_pause">PAUSE</string>
-    <string name="game_over">GAME OVER</string>
-    <string name="restart">Restart</string>
-    <string name="exit">Exit</string>
+    <string name="text_pause">ПАУЗА</string>
+    <string name="game_over">ИГРА ОКОНЧЕНА</string>
+    <string name="restart">ПЕРЕЗАПУСТИТЬ</string>
+    <string name="exit">ВЫХОД</string>
+    <string name="continue_game">ПРОДОЛЖИТЬ</string>
+    <string name="new_game">НОВАЯ ИГРА</string>
+    <string name="start_game">Играть</string>
+    <string name="settings">Настройки</string>
+    <string name="records">Рекорды</string>
+    <string name="exit_main">Выход</string>
 </resources>

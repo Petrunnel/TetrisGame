@@ -116,7 +116,7 @@
             android:padding="32dp"
             android:text="@string/game_over"
             android:textColor="@color/dialog_text"
-            android:textSize="40sp" />
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/btnRestart"
@@ -126,8 +126,9 @@
             android:backgroundTint="@color/black"
             android:fontFamily="sans-serif-condensed"
             android:text="@string/restart"
+            android:layout_marginHorizontal="8dp"
             android:textColor="@color/dialog_text"
-            android:textSize="30sp">
+            android:textSize="26sp">
 
         </Button>
 
@@ -136,13 +137,55 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="26dp"
             android:backgroundTint="@color/black"
             android:fontFamily="sans-serif-condensed"
             android:text="@string/exit"
             android:textColor="@color/dialog_text"
-            android:textSize="30sp" />
+            android:textSize="26sp" />
 
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/continueGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_dialog"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        tools:visibility="invisible">
+
+        <Button
+            android:id="@+id/btnContinue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="26dp"
+            android:backgroundTint="@color/black"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/continue_game"
+            android:textColor="@color/dialog_text"
+            android:textSize="26sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/btnNewGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="26dp"
+            android:backgroundTint="@color/black"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/new_game"
+            android:textColor="@color/dialog_text"
+            android:textSize="26sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -152,6 +195,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="290dp" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

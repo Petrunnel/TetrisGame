@@ -7,6 +7,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
 import com.petrynnel.tetrisgame.databinding.ActivityMainBinding
 import com.petrynnel.tetrisgame.gamelogic.*
 import com.petrynnel.tetrisgame.gamelogic.Constants.BOOST_MULTIPLIER
@@ -19,7 +20,7 @@ import kotlin.math.abs
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private lateinit var gameField: GameField
+        private var gameField: GameField? = null
 
         private var endOfGame = false
         private var shiftDirection: ShiftDirection? = null
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         private var isDownToBottomRequested = false
         private var isBoostRequested = false
         private var loopNumber = 0
+        private var isNewGame = true
 
         fun requestRotate() {
             isRotateRequested = true
@@ -36,14 +38,14 @@ class MainActivity : AppCompatActivity() {
             isDownToBottomRequested = true
         }
 
-        fun getField(): GameField = gameField
+        fun getField(): GameField = gameField ?: GameField()
 
         fun initFields() {
             loopNumber = 0
             endOfGame = false
             shiftDirection = ShiftDirection.AWAITING
             isRotateRequested = false
-            gameField = GameField()
+            gameField = getField()
         }
 
         fun logic() {
@@ -51,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             if (shiftDirection != ShiftDirection.AWAITING) { // Если есть запрос на сдвиг фигуры
 
                 /* Пробуем сдвинуть */
-                gameField.tryShiftFigure(shiftDirection)
+                getField().tryShiftFigure(shiftDirection)
 
                 /* Ожидаем нового запроса */
                 shiftDirection = ShiftDirection.AWAITING
@@ -59,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             if (isRotateRequested) { // Если есть запрос на поворот фигуры
 
                 /* Пробуем повернуть */
-                gameField.tryRotateFigure()
+                getField().tryRotateFigure()
 
                 /* Ожидаем нового запроса */
                 isRotateRequested = false
@@ -67,7 +69,7 @@ class MainActivity : AppCompatActivity() {
 
             if (isDownToBottomRequested) { //Если есть запрос на мгновенное падение фигуры
                 /*Сдвигаем фигуру до низа*/
-                gameField.letFallDown(isDownToBottom = true)
+                getField().letFallDown(isDownToBottom = true)
                 /* Ожидаем нового запроса */
                 isDownToBottomRequested = false
             }
@@ -77,14 +79,14 @@ class MainActivity : AppCompatActivity() {
              * FRAMES_PER_MOVE / BOOST_MULTIPLIER если есть запрос на ускорение падения
              */
             if (loopNumber % (FRAMES_PER_MOVE / if (isBoostRequested) BOOST_MULTIPLIER else 1) == 0) {
-                gameField.letFallDown(isDownToBottom = false)
+                getField().letFallDown(isDownToBottom = false)
             }
 
             /* Увеличение номера итерации (по модулю FPM)*/
             loopNumber = (loopNumber + 1) % FRAMES_PER_MOVE
 
             /* Если поле переполнено, игра закончена */
-            endOfGame = endOfGame || gameField.isOverfilled
+            endOfGame = endOfGame || getField().isOverfilled == true
         }
     }
 
@@ -139,7 +141,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         initGame()
     }
 
@@ -173,6 +174,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initGame() {
+        loadField()
+        if (gameField != null) isNewGame = false
         initControls()
         initFields()
         setBest()
@@ -181,7 +184,12 @@ class MainActivity : AppCompatActivity() {
     private fun gameStart() {
         binding.btnPause.setState(PlayPauseView.STATE_PLAY)
         job = CoroutineScope(Dispatchers.IO).launch {
-
+            withContext(NonCancellable) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (!isNewGame) showContinueGame()
+                    isNewGame = true
+                }
+            }
             /* Основной цикл игры*/
             while (!endOfGame) {
                 logic()
@@ -199,12 +207,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun gameStop() {
+        saveField()
         job?.cancel()
         resetBest()
     }
 
     private fun gameRestart() {
         gameStop()
+        resetSavedField()
         initFields()
         setBest()
         gameStart()
@@ -214,6 +224,7 @@ class MainActivity : AppCompatActivity() {
         with(binding) {
             btnPause.visibility = View.GONE
             gameOver.visibility = View.VISIBLE
+            resetSavedField()
             btnRestart.setOnClickListener {
                 gameRestart()
                 btnPause.visibility = View.VISIBLE
@@ -221,6 +232,24 @@ class MainActivity : AppCompatActivity() {
             }
             btnExit.setOnClickListener {
                 this@MainActivity.finish()
+            }
+        }
+    }
+
+    private fun showContinueGame() {
+        with(binding) {
+            gameStop()
+            btnPause.visibility = View.GONE
+            continueGame.visibility= View.VISIBLE
+            btnContinue.setOnClickListener {
+                gameStart()
+                btnPause.visibility = View.VISIBLE
+                continueGame.visibility = View.GONE
+            }
+            btnNewGame.setOnClickListener {
+                gameRestart()
+                btnPause.visibility = View.VISIBLE
+                continueGame.visibility = View.GONE
             }
         }
     }
@@ -239,4 +268,29 @@ class MainActivity : AppCompatActivity() {
             getField().best = sharedPreference.getInt("high_score", 0)
         }
     }
+
+    private fun saveField() {
+        val sharedPreference = getSharedPreferences("GAME_FIELD", Context.MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+        val gson = Gson()
+        val json = gson.toJson(gameField)
+        editor.putString("game_field", json)
+        editor.apply()
+    }
+
+    private fun loadField() {
+        val sharedPreference = getSharedPreferences("GAME_FIELD", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = sharedPreference.getString("game_field","")
+        gameField = gson.fromJson(json, GameField::class.java)
+    }
+
+    private fun resetSavedField() {
+        val sharedPreference = getSharedPreferences("GAME_FIELD", Context.MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+        editor.putString("game_field", "")
+        editor.apply()
+        gameField = null
+    }
+
 }
