@@ -62,7 +62,7 @@ class GameField {
         val rnd = Random()
 
         /* До определённого уровня создаём начальные блоки с пустотами в каждой линии */
-        for (y in 0 until initialLevel) {
+        for (y in 0 until prefHelper.loadBlocksInitialLevel()) {
 
             /* Количество пустых блоков в линии */
             val missingBlocksCount: Int = (MISSNG_BLOCKS_IN_INITIAL_LINE_MIN
@@ -101,7 +101,7 @@ class GameField {
         }
 
         /* Остальное пространство заполняем пустыми блоками */
-        for (y in initialLevel until COUNT_CELLS_Y + OFFSET_TOP) {
+        for (y in prefHelper.loadBlocksInitialLevel() until COUNT_CELLS_Y + OFFSET_TOP) {
             for (x in 0 until COUNT_CELLS_X) {
                 theField[x][y] = FigureColor.EMPTY_BLOCK
             }

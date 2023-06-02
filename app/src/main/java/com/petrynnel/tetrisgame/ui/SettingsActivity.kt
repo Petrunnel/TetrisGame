@@ -25,8 +25,38 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initSettings()
+    }
+
+    override fun onPause() {
+        saveSettings()
+        super.onPause()
+    }
+
+    private fun initSettings() {
+        initBackgroundColor()
+        initBlockForm()
+        initHasShader()
+        initBlocksLevel()
+        initLevel()
+    }
+
+    private fun saveSettings() {
+        prefHelper.saveSettings(
+            backgroundColor = GameFieldBackgroundColor.BLACK,
+            cornerRadius = cornerRadius,
+            hasShader = hasShader,
+            initialLevel = initialLevel,
+            blockInitialLevel = initialBlocksLevel
+        )
+    }
+
+    private fun initBackgroundColor() {}
+
+    private fun initBlockForm() {
         with(binding) {
-            val progress = when (prefHelper.loadCornerRadius()) {
+            cornerRadius = prefHelper.loadCornerRadius()
+            val progress = when (cornerRadius) {
                 BLOCK_CORNER_RADIUS_DISABLED -> {
                     cvBlockForm.radius = BLOCK_CORNER_RADIUS_DISABLED
                     0
@@ -36,7 +66,7 @@ class SettingsActivity : AppCompatActivity() {
                     1
                 }
                 BLOCK_CORNER_RADIUS_HUGE -> {
-                    cvBlockForm.radius = BLOCK_CORNER_RADIUS_SMALL
+                    cvBlockForm.radius = BLOCK_CORNER_RADIUS_HUGE
                     2
                 }
                 else -> 0
@@ -68,24 +98,23 @@ class SettingsActivity : AppCompatActivity() {
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {}
             })
+        }
+    }
 
-            initialLevel = prefHelper.loadInitialLevel()
-            tvInitialLevel.text = initialLevel.toString()
-            sbInitialLevel.setProgress(initialLevel, false)
-            sbInitialLevel.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
-                ) {
-                    initialLevel = progress
-                    tvInitialLevel.text = progress.toString()
-                }
+    private fun initHasShader() {
+        with(binding) {
+            hasShader = prefHelper.loadHasShader()
+            swHasShader.isChecked = hasShader
+            vGradient.isVisible = hasShader
+            swHasShader.setOnCheckedChangeListener { _, isChecked ->
+                hasShader = isChecked
+                vGradient.isVisible = isChecked
+            }
+        }
+    }
 
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            })
-
+    private fun initBlocksLevel() {
+        with(binding) {
             initialBlocksLevel = prefHelper.loadBlocksInitialLevel()
             tvBlockInitialLevel.text = initialBlocksLevel.toString()
             sbInitialBlocksLevel.setProgress(initialBlocksLevel, false)
@@ -103,24 +132,27 @@ class SettingsActivity : AppCompatActivity() {
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {}
             })
-            hasShader = prefHelper.loadHasShader()
-            swHasShader.isChecked = hasShader
-            vGradient.isVisible = hasShader
-            swHasShader.setOnCheckedChangeListener { _, isChecked ->
-                hasShader = isChecked
-                vGradient.isVisible = isChecked
-            }
         }
     }
 
-    override fun onPause() {
-        prefHelper.saveSettings(
-            backgroundColor = GameFieldBackgroundColor.BLACK,
-            cornerRadius = cornerRadius,
-            hasShader = hasShader,
-            initialLevel = initialLevel,
-            blockInitialLevel = initialBlocksLevel
-        )
-        super.onPause()
+    private fun initLevel() {
+        with(binding) {
+            initialLevel = prefHelper.loadInitialLevel()
+            tvInitialLevel.text = initialLevel.toString()
+            sbInitialLevel.setProgress(initialLevel, false)
+            sbInitialLevel.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    initialLevel = progress
+                    tvInitialLevel.text = progress.toString()
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
+        }
     }
 }

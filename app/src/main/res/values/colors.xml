@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <color name="colorPrimary">#FF1F1F</color>
+    <color name="colorPrimaryVariant">#773131</color>
+    <color name="colorOnPrimary">#000</color>
+    <color name="colorSecondary">#FFFF8000</color>
+    <color name="colorSecondaryVariant">#AF5901</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
@@ -19,7 +21,7 @@
     <color name="Z_FORM">#FFFF0000</color>
 
     <color name="dialog_background">#000000</color>
-    <color name="dialog_text">#80FFFFFF</color>
+    <color name="text_color">#7E7E7E</color>
     <color name="stroke">#86FF0000</color>
 
     <color name="background_black">#000000</color>

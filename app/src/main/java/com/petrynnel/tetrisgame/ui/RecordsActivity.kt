@@ -1,15 +1,15 @@
 package com.petrynnel.tetrisgame.ui
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.petrynnel.tetrisgame.R
+import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.databinding.ActivityRecordsBinding
 
 class RecordsActivity : AppCompatActivity() {
@@ -39,10 +39,7 @@ class RecordsActivity : AppCompatActivity() {
         }
 
         private fun getBestScores(): IntArray {
-            val sharedPreference = mContext.getSharedPreferences("HIGH_SCORE", Context.MODE_PRIVATE)
-            val gson = Gson()
-            val json = sharedPreference.getString("high_score", gson.toJson(IntArray(10)))
-            return gson.fromJson(json, IntArray::class.java) ?: IntArray(10)
+            return prefHelper.loadRecords()
         }
 
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

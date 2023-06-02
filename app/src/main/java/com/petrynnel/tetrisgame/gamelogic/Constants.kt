@@ -97,4 +97,7 @@ object Constants {
     const val SWIPE_MIN_DISTANCE = 560
     const val SWIPE_MAX_OFF_PATH = 700
     const val SWIPE_THRESHOLD_VELOCITY = 200
+
+    /* Количество рекордов */
+    const val NUMBER_OF_RECORDS = 10
 }

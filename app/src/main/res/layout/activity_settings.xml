@@ -9,7 +9,7 @@
     tools:context=".ui.SettingsActivity">
 
     <TextView
-        style="@style/SettingsText"
+        style="@style/CommonText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -37,7 +37,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                style="@style/SettingsText"
+                style="@style/CommonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
@@ -76,7 +76,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                style="@style/SettingsText"
+                style="@style/CommonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
@@ -140,7 +140,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                style="@style/SettingsText"
+                style="@style/CommonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
@@ -181,7 +181,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                style="@style/SettingsText"
+                style="@style/CommonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
@@ -192,7 +192,7 @@
 
             <TextView
                 android:id="@+id/tvBlockInitialLevel"
-                style="@style/SettingsText"
+                style="@style/CommonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="32dp"
@@ -235,7 +235,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                style="@style/SettingsText"
+                style="@style/CommonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
@@ -246,7 +246,7 @@
 
             <TextView
                 android:id="@+id/tvInitialLevel"
-                style="@style/SettingsText"
+                style="@style/CommonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="32dp"

@@ -85,7 +85,7 @@
         android:background="@drawable/bg_dialog"
         android:padding="32dp"
         android:text="@string/text_pause"
-        android:textColor="@color/dialog_text"
+        android:textColor="@color/text_color"
         android:textSize="40sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -115,7 +115,7 @@
             android:fontFamily="sans-serif-condensed"
             android:padding="32dp"
             android:text="@string/game_over"
-            android:textColor="@color/dialog_text"
+            android:textColor="@color/text_color"
             android:textSize="30sp" />
 
         <Button
@@ -127,7 +127,7 @@
             android:fontFamily="sans-serif-condensed"
             android:text="@string/restart"
             android:layout_marginHorizontal="8dp"
-            android:textColor="@color/dialog_text"
+            android:textColor="@color/text_color"
             android:textSize="26sp">
 
         </Button>
@@ -141,7 +141,7 @@
             android:backgroundTint="@color/black"
             android:fontFamily="sans-serif-condensed"
             android:text="@string/exit"
-            android:textColor="@color/dialog_text"
+            android:textColor="@color/text_color"
             android:textSize="26sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -169,7 +169,7 @@
             android:backgroundTint="@color/black"
             android:fontFamily="sans-serif-condensed"
             android:text="@string/continue_game"
-            android:textColor="@color/dialog_text"
+            android:textColor="@color/text_color"
             android:textSize="26sp">
 
         </Button>
@@ -184,7 +184,7 @@
             android:backgroundTint="@color/black"
             android:fontFamily="sans-serif-condensed"
             android:text="@string/new_game"
-            android:textColor="@color/dialog_text"
+            android:textColor="@color/text_color"
             android:textSize="26sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

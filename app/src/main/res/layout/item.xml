@@ -13,7 +13,7 @@
 
     <TextView
         android:id="@+id/item"
-        style="@style/SettingsText"
+        style="@style/CommonText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"

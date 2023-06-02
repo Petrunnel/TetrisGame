@@ -1,13 +1,11 @@
 package com.petrynnel.tetrisgame.ui
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.Gson
 import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.databinding.ActivityMainBinding
 import com.petrynnel.tetrisgame.gamelogic.*
@@ -260,50 +258,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setBest() {
-        val sharedPreference = getSharedPreferences("HIGH_SCORE", Context.MODE_PRIVATE)
-        val gson = Gson()
-        val json = sharedPreference.getString("high_score", gson.toJson(IntArray(10)))
-        val bestScores = gson.fromJson(json, IntArray::class.java)
-        getField().best = bestScores.max()
+        getField().best = prefHelper.loadRecords().max()
     }
 
     private fun resetBest() {
-        val sharedPreference = getSharedPreferences("HIGH_SCORE", Context.MODE_PRIVATE)
-        val gson = Gson()
-        var json = sharedPreference.getString("high_score", gson.toJson(IntArray(10)))
-        val bestScores = gson.fromJson(json, IntArray::class.java)
+        val bestScores = prefHelper.loadRecords()
         val minBestScore = bestScores.min()
         if (getField().score > minBestScore && !bestScores.contains(getField().score)) {
             bestScores[bestScores.indexOf(minBestScore)] = getField().score
-            val editor = sharedPreference.edit()
-            json = gson.toJson(bestScores)
-            editor.putString("high_score", json)
-            editor.apply()
+            prefHelper.saveRecords(bestScores)
             getField().best = bestScores.max()
         }
     }
 
     private fun saveField() {
-        val sharedPreference = getSharedPreferences("GAME_FIELD", Context.MODE_PRIVATE)
-        val editor = sharedPreference.edit()
-        val gson = Gson()
-        val json = gson.toJson(gameField)
-        editor.putString("game_field", json)
-        editor.apply()
+        prefHelper.saveField(gameField)
     }
 
     private fun loadField() {
-        val sharedPreference = getSharedPreferences("GAME_FIELD", Context.MODE_PRIVATE)
-        val gson = Gson()
-        val json = sharedPreference.getString("game_field", "")
-        gameField = gson.fromJson(json, GameField::class.java)
+        gameField = prefHelper.loadField()
     }
 
     private fun resetSavedField() {
-        val sharedPreference = getSharedPreferences("GAME_FIELD", Context.MODE_PRIVATE)
-        val editor = sharedPreference.edit()
-        editor.putString("game_field", "")
-        editor.apply()
         gameField = null
+        prefHelper.saveField(gameField)
     }
 }
