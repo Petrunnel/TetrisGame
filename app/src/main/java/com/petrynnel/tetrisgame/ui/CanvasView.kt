@@ -7,8 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.res.ResourcesCompat.getColor
 import com.petrynnel.tetrisgame.R
-import com.petrynnel.tetrisgame.ui.MainActivity.Companion.getField
-import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCK_CORNER_RADIUS
+import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.gamelogic.Constants.CELL_BOTTOM_OFFSET
 import com.petrynnel.tetrisgame.gamelogic.Constants.CELL_LEFT_OFFSET
 import com.petrynnel.tetrisgame.gamelogic.Constants.CELL_RIGHT_OFFSET
@@ -37,6 +36,7 @@ import com.petrynnel.tetrisgame.gamelogic.Coord
 import com.petrynnel.tetrisgame.gamelogic.Figure
 import com.petrynnel.tetrisgame.gamelogic.FigureColor
 import com.petrynnel.tetrisgame.gamelogic.GameField
+import com.petrynnel.tetrisgame.ui.MainActivity.Companion.getField
 
 class CanvasView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -45,16 +45,34 @@ class CanvasView @JvmOverloads constructor(
     private val figurePaint = Paint(ANTI_ALIAS_FLAG)
     private val levelPaint = Paint(ANTI_ALIAS_FLAG)
     private val textPaint = Paint(ANTI_ALIAS_FLAG)
+    private val backgroundPaint = Paint(ANTI_ALIAS_FLAG)
+
+    private val backgroundColor = resources.getColor(prefHelper.loadBackgroundColor(), null)
+    private val cornerRadius = prefHelper.loadCornerRadius()
+    private val hasShader = prefHelper.loadHasShader()
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val field = getField()
+
+        backgroundPaint.apply {
+            style = Paint.Style.FILL
+            color = backgroundColor
+        }
 
         levelPaint.apply {
             style = Paint.Style.STROKE
             strokeWidth = FIELD_BOUND_WIDTH
             color = Color.GRAY
         }
+
+        canvas.drawRect(
+            FIELD_BOUND_LEFT,
+            FIELD_BOUND_TOP,
+            FIELD_BOUND_RIGHT,
+            FIELD_BOUND_BOTTOM,
+            backgroundPaint
+        )
 
         canvas.drawRect(
             FIELD_BOUND_LEFT,
@@ -69,15 +87,20 @@ class CanvasView @JvmOverloads constructor(
             textSize = FIELD_TEXT_SIZE
         }
         val best = maxOf(field.best, field.score)
-
         canvas.drawText(best.toString(), FIELD_TEXT_X, FIELD_TEXT_BEST_Y, textPaint)
         canvas.drawText(field.score.toString(), FIELD_TEXT_X, FIELD_TEXT_SCORE_Y, textPaint)
         canvas.drawText(field.level.toString(), FIELD_TEXT_X, FIELD_TEXT_LEVEL_Y, textPaint)
 
         drawGameField(canvas, field, figurePaint)
         drawFigure(canvas, field.figureGhost, figurePaint, COLOR_ALPHA_FIGURE_GHOST)
-        drawFigure(canvas, field.figure, figurePaint, hasShader = true)
-        drawFigure(canvas, generateNextFigure(), figurePaint, hasShader = true, isNextFigure = true)
+        drawFigure(canvas, field.figure, figurePaint, hasShader = hasShader)
+        drawFigure(
+            canvas,
+            generateNextFigure(),
+            figurePaint,
+            hasShader = hasShader,
+            isNextFigure = true
+        )
     }
 
     private fun setPaintColor(color: FigureColor?) {
@@ -110,7 +133,10 @@ class CanvasView @JvmOverloads constructor(
             setPaintColor(gameField[x][y])
             val blockXCoord = GAME_FIELD_WIDTH - (x + 1) * CELL_SIZE
             val blockYCoord = GAME_FIELD_HEIGHT - (y + 1) * CELL_SIZE
-            paint.shader = shader(blockXCoord, blockYCoord, paint)
+            if (hasShader)
+                paint.shader = shader(blockXCoord, blockYCoord, paint)
+            else
+                paint.shader = null
             drawBlock(canvas, blockXCoord, blockYCoord, paint)
         }
     }
@@ -155,8 +181,8 @@ class CanvasView @JvmOverloads constructor(
             y + CELL_TOP_OFFSET,
             x + CELL_RIGHT_OFFSET,
             y + CELL_BOTTOM_OFFSET,
-            BLOCK_CORNER_RADIUS,
-            BLOCK_CORNER_RADIUS,
+            cornerRadius,
+            cornerRadius,
             paint
         )
     }

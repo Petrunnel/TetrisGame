@@ -23,7 +23,9 @@ object Constants {
     const val CELL_RIGHT_OFFSET = 76F
 
     /* Радиус скругления блоков*/
-    const val BLOCK_CORNER_RADIUS = 20F
+    const val BLOCK_CORNER_RADIUS_DISABLED = 0F
+    const val BLOCK_CORNER_RADIUS_SMALL = 20F
+    const val BLOCK_CORNER_RADIUS_HUGE = 200F
 
     /* Координаты начальной точки для отрисовки следующей фигуры */
     const val NEXT_FIGURE_X = 1050F
@@ -67,7 +69,22 @@ object Constants {
     const val DEFAULT_GAME_SPEED = 16L
 
     /* Количество линий, заполненных блоками в начале */
-    const val BLOCKS_INITIAL_LEVEL = COUNT_CELLS_Y / 3
+    const val DEFAULT_BLOCKS_INITIAL_LEVEL = COUNT_CELLS_Y / 3
+
+    /* Начальный уровень по умолчанию */
+    const val DEFAULT_INITIAL_LEVEL = 1
+
+    /* Максимальный уровень */
+    const val MAX_LEVEL = 10
+
+    /* Очков до повышения уровня */
+    const val SCORE_TO_NEXT_LEVEL = 50
+
+    /* Количество очков за удаление 1-4 линий */
+    const val SCORE_FOR_ONE_LINE = 1
+    const val SCORE_FOR_DOUBLE_LINE = 3
+    const val SCORE_FOR_TRIPLE_LINE = 7
+    const val SCORE_FOR_QUADRUPLE_LINE = 15
 
     /* Максимальное и минимальное количества отсутствующих блоков в линиях, созданных в начале игры */
     const val MISSNG_BLOCKS_IN_INITIAL_LINE_MIN = COUNT_CELLS_X / 3

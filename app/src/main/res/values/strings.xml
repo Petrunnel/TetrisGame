@@ -14,4 +14,9 @@
     <string name="settings">Настройки</string>
     <string name="records">Рекорды</string>
     <string name="exit_main">Выход</string>
+    <string name="gradient">Градиент</string>
+    <string name="blocks_initial_level">Стартовые линии</string>
+    <string name="initial_level">Начальный уровень</string>
+    <string name="blocks_form">Форма блоков</string>
+    <string name="background_color">Цвет фона</string>
 </resources>

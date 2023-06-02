@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
+import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.databinding.ActivityMainBinding
 import com.petrynnel.tetrisgame.gamelogic.*
 import com.petrynnel.tetrisgame.gamelogic.Constants.BOOST_MULTIPLIER
@@ -94,7 +95,7 @@ class MainActivity : AppCompatActivity() {
 
     private var mDownX = 0F
     private var mDownY = 0F
-    private var gameSpeed = DEFAULT_GAME_SPEED
+    private var gameSpeed = getField().gameSpeed
     private var job: Job? = null
 
     private val gestureDetector by lazy { GestureDetector(this, MyGestureDetector()) }
@@ -188,6 +189,7 @@ class MainActivity : AppCompatActivity() {
             withContext(NonCancellable) {
                 CoroutineScope(Dispatchers.Main).launch {
                     if (!isNewGame) showContinueGame()
+                    else gameSpeed = DEFAULT_GAME_SPEED - getField().initialLevel
                     isNewGame = true
                 }
             }
@@ -200,7 +202,6 @@ class MainActivity : AppCompatActivity() {
             }
             withContext(NonCancellable) {
                 CoroutineScope(Dispatchers.Main).launch {
-                    resetBest()
                     showGameOver()
                 }
             }
@@ -210,13 +211,13 @@ class MainActivity : AppCompatActivity() {
     private fun gameStop() {
         saveField()
         job?.cancel()
-        resetBest()
     }
 
     private fun gameRestart() {
         gameStop()
         resetSavedField()
         initFields()
+        gameSpeed = DEFAULT_GAME_SPEED - prefHelper.loadInitialLevel()
         setBest()
         gameStart()
     }
@@ -224,6 +225,7 @@ class MainActivity : AppCompatActivity() {
     private fun showGameOver() {
         with(binding) {
             gameStop()
+            resetBest()
             btnPause.visibility = View.GONE
             gameOver.visibility = View.VISIBLE
             resetSavedField()
@@ -249,6 +251,7 @@ class MainActivity : AppCompatActivity() {
                 continueGame.visibility = View.GONE
             }
             btnNewGame.setOnClickListener {
+                resetBest()
                 gameRestart()
                 btnPause.visibility = View.VISIBLE
                 continueGame.visibility = View.GONE

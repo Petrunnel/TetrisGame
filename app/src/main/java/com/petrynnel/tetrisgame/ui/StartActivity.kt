@@ -17,6 +17,7 @@ class StartActivity : AppCompatActivity() {
         with(binding) {
             btnStart.setOnClickListener { startGame() }
             btnRecords.setOnClickListener { startRecords() }
+            btnSettings.setOnClickListener { startSettings() }
             btnExit.setOnClickListener { exit() }
         }
     }
@@ -25,10 +26,10 @@ class StartActivity : AppCompatActivity() {
         startActivity(Intent(this, MainActivity::class.java))
     }
 
-//    private fun startSettings() {
-//        startActivity(Intent(this, SettingsActivity::class.java))
-//    }
-//
+    private fun startSettings() {
+        startActivity(Intent(this, SettingsActivity::class.java))
+    }
+
     private fun startRecords() {
         startActivity(Intent(this, RecordsActivity::class.java))
     }

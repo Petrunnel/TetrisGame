@@ -20,4 +20,20 @@
 
     <color name="dialog_background">#000000</color>
     <color name="dialog_text">#80FFFFFF</color>
+    <color name="stroke">#86FF0000</color>
+
+    <color name="background_black">#000000</color>
+    <color name="background_gray">#FF444444</color>
+    <color name="background_white">#EDEDED</color>
+    <color name="background_red">#BD4E4E</color>
+    <color name="background_green">#409A4C</color>
+    <color name="background_blue">#258CAC</color>
+    <color name="background_yellow">#9F9355</color>
+    <color name="background_transparent">#00000000</color>
+
+    <color name="switch_track">#4DFF0000</color>
+    <color name="switch_track_checked">#CBFF0000</color>
+    <color name="switch_thumb">#773131</color>
+    <color name="switch_thumb_checked">#FF1F1F</color>
+
 </resources>

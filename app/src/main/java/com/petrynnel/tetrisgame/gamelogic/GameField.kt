@@ -1,13 +1,19 @@
 package com.petrynnel.tetrisgame.gamelogic
 
-import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCKS_INITIAL_LEVEL
+import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.gamelogic.Constants.COUNT_CELLS_X
 import com.petrynnel.tetrisgame.gamelogic.Constants.COUNT_CELLS_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_GAME_SPEED
 import com.petrynnel.tetrisgame.gamelogic.Constants.MAX_FIGURE_WIDTH
+import com.petrynnel.tetrisgame.gamelogic.Constants.MAX_LEVEL
 import com.petrynnel.tetrisgame.gamelogic.Constants.MISSNG_BLOCKS_IN_INITIAL_LINE_MAX
 import com.petrynnel.tetrisgame.gamelogic.Constants.MISSNG_BLOCKS_IN_INITIAL_LINE_MIN
 import com.petrynnel.tetrisgame.gamelogic.Constants.OFFSET_TOP
+import com.petrynnel.tetrisgame.gamelogic.Constants.SCORE_FOR_DOUBLE_LINE
+import com.petrynnel.tetrisgame.gamelogic.Constants.SCORE_FOR_ONE_LINE
+import com.petrynnel.tetrisgame.gamelogic.Constants.SCORE_FOR_QUADRUPLE_LINE
+import com.petrynnel.tetrisgame.gamelogic.Constants.SCORE_FOR_TRIPLE_LINE
+import com.petrynnel.tetrisgame.gamelogic.Constants.SCORE_TO_NEXT_LEVEL
 import java.util.*
 
 class GameField {
@@ -26,7 +32,8 @@ class GameField {
     var score = 0
         private set
 
-    var level = 1
+    val initialLevel = prefHelper.loadInitialLevel()
+    var level = initialLevel
         private set
 
     var nextFigureForm: FigureForm = FigureForm.randomForm
@@ -55,7 +62,7 @@ class GameField {
         val rnd = Random()
 
         /* До определённого уровня создаём начальные блоки с пустотами в каждой линии */
-        for (y in 0 until BLOCKS_INITIAL_LEVEL) {
+        for (y in 0 until initialLevel) {
 
             /* Количество пустых блоков в линии */
             val missingBlocksCount: Int = (MISSNG_BLOCKS_IN_INITIAL_LINE_MIN
@@ -90,10 +97,11 @@ class GameField {
                     countFilledCellsInLine[y]++
                 }
             }
+            setGameSpeed()
         }
 
         /* Остальное пространство заполняем пустыми блоками */
-        for (y in BLOCKS_INITIAL_LEVEL until COUNT_CELLS_Y + OFFSET_TOP) {
+        for (y in initialLevel until COUNT_CELLS_Y + OFFSET_TOP) {
             for (x in 0 until COUNT_CELLS_X) {
                 theField[x][y] = FigureColor.EMPTY_BLOCK
             }
@@ -222,18 +230,19 @@ class GameField {
 
     private fun incScore(linesCount: Int) {
         when (linesCount) {
-            1 -> score += 1
-            2 -> score += 3
-            3 -> score += 7
-            4 -> score += 15
+            1 -> score += SCORE_FOR_ONE_LINE
+            2 -> score += SCORE_FOR_DOUBLE_LINE
+            3 -> score += SCORE_FOR_TRIPLE_LINE
+            4 -> score += SCORE_FOR_QUADRUPLE_LINE
         }
         nextLevel()
     }
 
     private fun nextLevel() {
-        level = when (score / 50) {
-            in 0..8 -> (score / 50) + 1
-            else -> 10
+        val calcLevel = (score / SCORE_TO_NEXT_LEVEL) + initialLevel
+        level = when (calcLevel) {
+            in 1 until MAX_LEVEL -> calcLevel
+            else -> MAX_LEVEL
         }
         setGameSpeed()
     }
