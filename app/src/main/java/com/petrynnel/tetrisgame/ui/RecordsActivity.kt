@@ -28,7 +28,7 @@ class RecordsActivity : AppCompatActivity() {
         private val bestScores = getBestScores().filter { it > 0 }.sortedDescending()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            return ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item, parent, false))
+            return ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_records, parent, false))
         }
 
         override fun getItemCount(): Int = bestScores.size

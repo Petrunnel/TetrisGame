@@ -33,7 +33,7 @@ class PreferenceHelper {
     }
 
     fun loadBackgroundColor() =
-        sharedPreferencesSettings.getInt("background_color", GameFieldBackgroundColor.BLACK)
+        sharedPreferencesSettings.getInt("background_color", GameFieldBackgroundColor.BLACK.color)
 
     fun loadCornerRadius() =
         sharedPreferencesSettings.getFloat("corner_radius", BLOCK_CORNER_RADIUS_DISABLED)

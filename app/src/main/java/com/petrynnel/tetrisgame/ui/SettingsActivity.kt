@@ -1,24 +1,37 @@
 package com.petrynnel.tetrisgame.ui
 
-import androidx.appcompat.app.AppCompatActivity
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
 import android.widget.SeekBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.databinding.ActivitySettingsBinding
 import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCK_CORNER_RADIUS_DISABLED
 import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCK_CORNER_RADIUS_HUGE
 import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCK_CORNER_RADIUS_SMALL
-import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_BLOCKS_INITIAL_LEVEL
-import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_INITIAL_LEVEL
 import com.petrynnel.tetrisgame.gamelogic.GameFieldBackgroundColor
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
-    private var cornerRadius = BLOCK_CORNER_RADIUS_DISABLED
-    private var initialLevel = DEFAULT_INITIAL_LEVEL
-    private var initialBlocksLevel = DEFAULT_BLOCKS_INITIAL_LEVEL
-    private var hasShader = false
+    private var backgroundColor = prefHelper.loadBackgroundColor()
+    private var cornerRadius = prefHelper.loadCornerRadius()
+    private var initialLevel = prefHelper.loadInitialLevel()
+    private var initialBlocksLevel = prefHelper.loadBlocksInitialLevel()
+    private var hasShader = prefHelper.loadHasShader()
+    private var mAdapter: GridAdapter? = null
+
+    private val itemOnClick = object : GridAdapter.OnItemClickListener {
+        @SuppressLint("NotifyDataSetChanged")
+        override fun onItemClick(gameFieldBackgroundColor: GameFieldBackgroundColor) {
+            backgroundColor = gameFieldBackgroundColor.color
+            saveSettings()
+            setBackgroundColorPreview()
+            mAdapter?.notifyDataSetChanged()
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +56,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun saveSettings() {
         prefHelper.saveSettings(
-            backgroundColor = GameFieldBackgroundColor.BLACK,
+            backgroundColor = backgroundColor,
             cornerRadius = cornerRadius,
             hasShader = hasShader,
             initialLevel = initialLevel,
@@ -51,11 +64,22 @@ class SettingsActivity : AppCompatActivity() {
         )
     }
 
-    private fun initBackgroundColor() {}
+    private fun initBackgroundColor() {
+        with(binding) {
+            setBackgroundColorPreview()
+            cvBackgroundColor.setOnClickListener {
+                cvBackgroundColorDialog.visibility = View.VISIBLE
+            }
+            btnClose.setOnClickListener {
+                cvBackgroundColorDialog.visibility = View.INVISIBLE
+            }
+            mAdapter = GridAdapter(this@SettingsActivity, itemOnClick)
+            rvBackgroundColors.adapter = mAdapter
+        }
+    }
 
     private fun initBlockForm() {
         with(binding) {
-            cornerRadius = prefHelper.loadCornerRadius()
             val progress = when (cornerRadius) {
                 BLOCK_CORNER_RADIUS_DISABLED -> {
                     cvBlockForm.radius = BLOCK_CORNER_RADIUS_DISABLED
@@ -103,7 +127,6 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun initHasShader() {
         with(binding) {
-            hasShader = prefHelper.loadHasShader()
             swHasShader.isChecked = hasShader
             vGradient.isVisible = hasShader
             swHasShader.setOnCheckedChangeListener { _, isChecked ->
@@ -115,7 +138,6 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun initBlocksLevel() {
         with(binding) {
-            initialBlocksLevel = prefHelper.loadBlocksInitialLevel()
             tvBlockInitialLevel.text = initialBlocksLevel.toString()
             sbInitialBlocksLevel.setProgress(initialBlocksLevel, false)
             sbInitialBlocksLevel.setOnSeekBarChangeListener(object :
@@ -137,7 +159,6 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun initLevel() {
         with(binding) {
-            initialLevel = prefHelper.loadInitialLevel()
             tvInitialLevel.text = initialLevel.toString()
             sbInitialLevel.setProgress(initialLevel, false)
             sbInitialLevel.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -154,5 +175,11 @@ class SettingsActivity : AppCompatActivity() {
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {}
             })
         }
+    }
+
+    private fun setBackgroundColorPreview() {
+        binding.cvBackgroundColorPreview.setCardBackgroundColor(
+            this@SettingsActivity.getColor(prefHelper.loadBackgroundColor())
+        )
     }
 }

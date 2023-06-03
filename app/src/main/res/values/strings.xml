@@ -19,4 +19,6 @@
     <string name="initial_level">Начальный уровень</string>
     <string name="blocks_form">Форма блоков</string>
     <string name="background_color">Цвет фона</string>
+    <string name="close">ЗАКРЫТЬ</string>
+
 </resources>
