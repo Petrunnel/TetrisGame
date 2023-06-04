@@ -10,9 +10,11 @@ enum class GameFieldBackgroundColor(val color: Int) {
     RED(R.color.background_red),
     GREEN(R.color.background_green),
     BLUE(R.color.background_blue),
-    YELLOW(R.color.background_yellow);
+    YELLOW(R.color.background_yellow),
+    BROWN(R.color.background_brown),
+    ORANGE(R.color.background_orange);
 
     companion object {
-        val backgroundColors = arrayOf(BLACK, GRAY, WHITE, RED, GREEN, BLUE, YELLOW)
+        val backgroundColors = arrayOf(BLACK, GRAY, WHITE, RED, GREEN, BLUE, YELLOW, BROWN, ORANGE)
     }
 }

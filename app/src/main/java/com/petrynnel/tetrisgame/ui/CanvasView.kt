@@ -50,6 +50,7 @@ class CanvasView @JvmOverloads constructor(
     private val backgroundColor = resources.getColor(prefHelper.loadBackgroundColor(), null)
     private val cornerRadius = prefHelper.loadCornerRadius()
     private val hasShader = prefHelper.loadHasShader()
+    private val hasShadow = prefHelper.loadHasShadow()
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -92,7 +93,9 @@ class CanvasView @JvmOverloads constructor(
         canvas.drawText(field.level.toString(), FIELD_TEXT_X, FIELD_TEXT_LEVEL_Y, textPaint)
 
         drawGameField(canvas, field, figurePaint)
-        drawFigure(canvas, field.figureGhost, figurePaint, COLOR_ALPHA_FIGURE_GHOST)
+        if (hasShadow) {
+            drawFigure(canvas, field.figureGhost, figurePaint, COLOR_ALPHA_FIGURE_GHOST)
+        }
         drawFigure(canvas, field.figure, figurePaint, hasShader = hasShader)
         drawFigure(
             canvas,

@@ -31,6 +31,8 @@
     <color name="background_green">#409A4C</color>
     <color name="background_blue">#258CAC</color>
     <color name="background_yellow">#9F9355</color>
+    <color name="background_brown">#8D6E63</color>
+    <color name="background_orange">#FFB74D</color>
     <color name="background_transparent">#00000000</color>
 
     <color name="switch_track">#4DFF0000</color>

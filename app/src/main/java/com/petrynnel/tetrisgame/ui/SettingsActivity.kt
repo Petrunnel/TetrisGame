@@ -17,9 +17,10 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     private var backgroundColor = prefHelper.loadBackgroundColor()
     private var cornerRadius = prefHelper.loadCornerRadius()
+    private var hasShader = prefHelper.loadHasShader()
+    private var hasShadow = prefHelper.loadHasShadow()
     private var initialLevel = prefHelper.loadInitialLevel()
     private var initialBlocksLevel = prefHelper.loadBlocksInitialLevel()
-    private var hasShader = prefHelper.loadHasShader()
     private var mAdapter: GridAdapter? = null
 
     private val itemOnClick = object : GridAdapter.OnItemClickListener {
@@ -31,7 +32,6 @@ class SettingsActivity : AppCompatActivity() {
             mAdapter?.notifyDataSetChanged()
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +50,7 @@ class SettingsActivity : AppCompatActivity() {
         initBackgroundColor()
         initBlockForm()
         initHasShader()
+        initHasShadow()
         initBlocksLevel()
         initLevel()
     }
@@ -59,6 +60,7 @@ class SettingsActivity : AppCompatActivity() {
             backgroundColor = backgroundColor,
             cornerRadius = cornerRadius,
             hasShader = hasShader,
+            hasShadow = hasShadow,
             initialLevel = initialLevel,
             blockInitialLevel = initialBlocksLevel
         )
@@ -69,9 +71,11 @@ class SettingsActivity : AppCompatActivity() {
             setBackgroundColorPreview()
             cvBackgroundColor.setOnClickListener {
                 cvBackgroundColorDialog.visibility = View.VISIBLE
+                llSettings.visibility = View.INVISIBLE
             }
             btnClose.setOnClickListener {
                 cvBackgroundColorDialog.visibility = View.INVISIBLE
+                llSettings.visibility = View.VISIBLE
             }
             mAdapter = GridAdapter(this@SettingsActivity, itemOnClick)
             rvBackgroundColors.adapter = mAdapter
@@ -132,6 +136,15 @@ class SettingsActivity : AppCompatActivity() {
             swHasShader.setOnCheckedChangeListener { _, isChecked ->
                 hasShader = isChecked
                 vGradient.isVisible = isChecked
+            }
+        }
+    }
+
+    private fun initHasShadow() {
+        with(binding) {
+            swHasShadow.isChecked = hasShadow
+            swHasShadow.setOnCheckedChangeListener { _, isChecked ->
+                hasShadow = isChecked
             }
         }
     }

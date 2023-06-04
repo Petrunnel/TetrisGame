@@ -20,6 +20,7 @@ class PreferenceHelper {
         backgroundColor: Int,
         cornerRadius: Float,
         hasShader: Boolean,
+        hasShadow: Boolean,
         initialLevel: Int,
         blockInitialLevel: Int
     ) {
@@ -27,6 +28,7 @@ class PreferenceHelper {
             it.putInt("background_color", backgroundColor)
             it.putFloat("corner_radius", cornerRadius)
             it.putBoolean("has_shader", hasShader)
+            it.putBoolean("has_shadow", hasShadow)
             it.putInt("initial_level", initialLevel)
             it.putInt("blocks_initial_level", blockInitialLevel)
         }
@@ -39,6 +41,8 @@ class PreferenceHelper {
         sharedPreferencesSettings.getFloat("corner_radius", BLOCK_CORNER_RADIUS_DISABLED)
 
     fun loadHasShader() = sharedPreferencesSettings.getBoolean("has_shader", false)
+
+    fun loadHasShadow() = sharedPreferencesSettings.getBoolean("has_shadow", true)
 
     fun loadInitialLevel() =
         sharedPreferencesSettings.getInt("initial_level", DEFAULT_INITIAL_LEVEL)
