@@ -21,7 +21,6 @@
         android:id="@+id/tvBest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="310dp"
         android:alpha="0.5"
         android:fontFamily="sans-serif-condensed"
         android:text="@string/best"
@@ -34,40 +33,37 @@
         android:id="@+id/tvScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:alpha="0.5"
         android:fontFamily="sans-serif-condensed"
         android:text="@string/score"
         android:textColor="#FFFFFF"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="@+id/tvBest"
-        app:layout_constraintTop_toBottomOf="@+id/tvBest" />
+        app:layout_constraintTop_toTopOf="@+id/canvas" />
 
     <TextView
         android:id="@+id/tvLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:alpha="0.5"
         android:fontFamily="sans-serif-condensed"
         android:text="@string/level"
         android:textColor="#FFFFFF"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="@+id/tvScore"
-        app:layout_constraintTop_toBottomOf="@+id/tvScore" />
+        app:layout_constraintTop_toTopOf="@+id/canvas" />
 
     <TextView
         android:id="@+id/tvNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:alpha="0.5"
         android:fontFamily="sans-serif-condensed"
         android:text="@string/next"
         android:textColor="#FFFFFF"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="@+id/tvScore"
-        app:layout_constraintTop_toBottomOf="@+id/tvLevel" />
+        app:layout_constraintTop_toTopOf="@+id/canvas" />
 
     <com.petrynnel.tetrisgame.ui.PlayPauseView
         android:id="@+id/btnPause"
@@ -123,10 +119,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginHorizontal="8dp"
             android:backgroundTint="@color/black"
             android:fontFamily="sans-serif-condensed"
             android:text="@string/restart"
-            android:layout_marginHorizontal="8dp"
             android:textColor="@color/text_color"
             android:textSize="26sp">
 

@@ -38,8 +38,11 @@ object Constants {
     /* Координаты для отрисовки текстовой информации об игре*/
     const val FIELD_TEXT_X = 850F
     const val FIELD_TEXT_BEST_Y = 190F
+    const val FIELD_LABEL_SCORE_Y = 210
     const val FIELD_TEXT_SCORE_Y = 410F
+    const val FIELD_LABEL_LEVEL_Y = 435
     const val FIELD_TEXT_LEVEL_Y = 635F
+    const val FIELD_LABEL_NEXT_Y = 660
 
     /* Размер текста информации об игре*/
     const val FIELD_TEXT_SIZE = 100F

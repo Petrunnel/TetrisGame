@@ -5,12 +5,17 @@ import android.os.Bundle
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.databinding.ActivityMainBinding
 import com.petrynnel.tetrisgame.gamelogic.*
 import com.petrynnel.tetrisgame.gamelogic.Constants.BOOST_MULTIPLIER
 import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_GAME_SPEED
+import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_LEVEL_Y
+import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_NEXT_Y
+import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_SCORE_Y
+import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_TEXT_X
 import com.petrynnel.tetrisgame.gamelogic.Constants.FRAMES_PER_MOVE
 import kotlinx.coroutines.*
 import kotlin.math.abs
@@ -178,6 +183,10 @@ class MainActivity : AppCompatActivity() {
         if (gameField != null) isNewGame = false
         initControls()
         initFields()
+        binding.tvBest.setMargin(left = FIELD_TEXT_X.toInt())
+        binding.tvScore.setMargin(top = FIELD_LABEL_SCORE_Y)
+        binding.tvLevel.setMargin(top = FIELD_LABEL_LEVEL_Y)
+        binding.tvNext.setMargin(top = FIELD_LABEL_NEXT_Y)
         setBest()
     }
 
@@ -282,5 +291,21 @@ class MainActivity : AppCompatActivity() {
     private fun resetSavedField() {
         gameField = null
         prefHelper.saveField(gameField)
+    }
+
+    private fun View.setMargin(
+        left: Int? = null,
+        top: Int? = null,
+        right: Int? = null,
+        bottom: Int? = null
+    ) {
+        val params = (layoutParams as? MarginLayoutParams)
+        params?.setMargins(
+            left ?: params.leftMargin,
+            top ?: params.topMargin,
+            right ?: params.rightMargin,
+            bottom ?: params.bottomMargin
+        )
+        layoutParams = params
     }
 }
