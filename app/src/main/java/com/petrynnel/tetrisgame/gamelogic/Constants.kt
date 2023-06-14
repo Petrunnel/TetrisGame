@@ -97,7 +97,7 @@ object Constants {
     const val MAX_FIGURE_WIDTH = 4
 
     /* Значение параметров дистанции и скорости для срабатывания свайпа вниз */
-    const val SWIPE_MIN_DISTANCE = 560
+    const val SWIPE_MIN_DISTANCE = 400
     const val SWIPE_MAX_OFF_PATH = 700
     const val SWIPE_THRESHOLD_VELOCITY = 200
 
