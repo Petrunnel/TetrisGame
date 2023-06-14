@@ -6,11 +6,14 @@ import androidx.annotation.AttrRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.petrynnel.tetrisgame.R
+import com.petrynnel.tetrisgame.gamelogic.SoundEffects
 
 
 class PlayPauseView : AppCompatImageView {
     private var mPlayToPauseAnim: AnimatedVectorDrawableCompat? = null
     private var mPauseToPlay: AnimatedVectorDrawableCompat? = null
+
+    private val soundEffects = SoundEffects()
 
     constructor(context: Context) : super(context) {
         init(context)
@@ -51,6 +54,7 @@ class PlayPauseView : AppCompatImageView {
 
     fun changeState() {
         if (isPaused()) setState(STATE_PLAY) else setState(STATE_PAUSE)
+        soundEffects.playPauseEffect()
     }
 
     fun isPaused() = isActivated

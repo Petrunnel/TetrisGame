@@ -21,5 +21,8 @@
     <string name="background_color">Цвет фона</string>
     <string name="close">ЗАКРЫТЬ</string>
     <string name="show_shadow">Показывать тень</string>
+    <string name="vibration">Вибрация</string>
+    <string name="sound_effects">Звуковые эффекты</string>
+    <string name="music">Музыка</string>
 
 </resources>

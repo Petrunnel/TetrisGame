@@ -4,10 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.petrynnel.tetrisgame.databinding.ActivityStartBinding
+import com.petrynnel.tetrisgame.gamelogic.SoundEffects
 
 class StartActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStartBinding
+    private val soundEffects = SoundEffects()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,18 +25,22 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun startGame() {
+        soundEffects.playSelectEffect()
         startActivity(Intent(this, MainActivity::class.java))
     }
 
     private fun startSettings() {
+        soundEffects.playSelectEffect()
         startActivity(Intent(this, SettingsActivity::class.java))
     }
 
     private fun startRecords() {
+        soundEffects.playSelectEffect()
         startActivity(Intent(this, RecordsActivity::class.java))
     }
 
     private fun exit() {
+        soundEffects.playSelectEffect()
         this.finish()
     }
 }

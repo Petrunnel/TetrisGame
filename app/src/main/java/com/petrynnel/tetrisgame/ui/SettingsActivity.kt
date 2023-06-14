@@ -21,6 +21,9 @@ class SettingsActivity : AppCompatActivity() {
     private var hasShadow = prefHelper.loadHasShadow()
     private var initialLevel = prefHelper.loadInitialLevel()
     private var initialBlocksLevel = prefHelper.loadBlocksInitialLevel()
+    private var hasVibration = prefHelper.loadHasVibration()
+    private var hasSoundEffects = prefHelper.loadHasSoundEffects()
+    private var hasMusic = prefHelper.loadHasMusic()
     private var mAdapter: GridAdapter? = null
 
     private val itemOnClick = object : GridAdapter.OnItemClickListener {
@@ -53,6 +56,9 @@ class SettingsActivity : AppCompatActivity() {
         initHasShadow()
         initBlocksLevel()
         initLevel()
+        initHasVibration()
+        initHasSoundEffects()
+        initHasMusic()
     }
 
     private fun saveSettings() {
@@ -62,7 +68,10 @@ class SettingsActivity : AppCompatActivity() {
             hasShader = hasShader,
             hasShadow = hasShadow,
             initialLevel = initialLevel,
-            blockInitialLevel = initialBlocksLevel
+            blockInitialLevel = initialBlocksLevel,
+            hasVibration = hasVibration,
+            hasSoundEffects = hasSoundEffects,
+            hasMusic = hasMusic
         )
     }
 
@@ -194,5 +203,32 @@ class SettingsActivity : AppCompatActivity() {
         binding.cvBackgroundColorPreview.setCardBackgroundColor(
             this@SettingsActivity.getColor(prefHelper.loadBackgroundColor())
         )
+    }
+
+    private fun initHasVibration() {
+        with(binding) {
+            swHasVibration.isChecked = hasVibration
+            swHasVibration.setOnCheckedChangeListener { _, isChecked ->
+                hasVibration = isChecked
+            }
+        }
+    }
+
+    private fun initHasSoundEffects() {
+        with(binding) {
+            swHasSoundEffects.isChecked = hasSoundEffects
+            swHasSoundEffects.setOnCheckedChangeListener { _, isChecked ->
+                hasSoundEffects = isChecked
+            }
+        }
+    }
+
+    private fun initHasMusic() {
+        with(binding) {
+            swHasMusic.isChecked = hasMusic
+            swHasMusic.setOnCheckedChangeListener { _, isChecked ->
+                hasMusic = isChecked
+            }
+        }
     }
 }

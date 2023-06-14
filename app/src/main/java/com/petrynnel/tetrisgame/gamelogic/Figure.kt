@@ -43,6 +43,8 @@ open class Figure @JvmOverloads constructor(
         }
     }
 
+    fun isOForm() = form == FigureForm.O_FORM
+
     val fallenCoords: Array<Coord?>
         get() {
             val newFirstCell = Coord(metaPointCoords.x, metaPointCoords.y - 1)

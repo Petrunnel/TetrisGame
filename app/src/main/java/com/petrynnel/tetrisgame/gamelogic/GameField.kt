@@ -1,5 +1,6 @@
 package com.petrynnel.tetrisgame.gamelogic
 
+import com.petrynnel.tetrisgame.TetrisApp.Companion.instance
 import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.gamelogic.Constants.COUNT_CELLS_X
 import com.petrynnel.tetrisgame.gamelogic.Constants.COUNT_CELLS_Y
@@ -51,6 +52,8 @@ class GameField {
 
     private val theField: Array<Array<FigureColor?>>
     private val countFilledCellsInLine: IntArray
+
+    private var soundEffects: SoundEffects = SoundEffects()
 
     init {
         spawnNewFigure()
@@ -108,6 +111,10 @@ class GameField {
         }
     }
 
+    fun initSoundEffects() {
+        soundEffects = SoundEffects()
+    }
+
     fun getTheField(): Array<Array<FigureColor?>> {
         return theField
     }
@@ -125,6 +132,8 @@ class GameField {
         if (canShift) {
             figure.shift(shiftDirection)
             ghostRefresh()
+            soundEffects.playMoveEffect()
+            instance.vibrate(Vibration.VIBRATION_DURATION_SHORT)
         }
     }
 
@@ -141,6 +150,10 @@ class GameField {
         if (canRotate) {
             figure.rotate()
             ghostRefresh()
+            if (!figure.isOForm()) {
+                soundEffects.playRotateEffect()
+                instance.vibrate()
+            }
         }
     }
 
@@ -181,12 +194,19 @@ class GameField {
             /* начисляем очки за количество заполненных линий */
             incScore(count)
             /* Если это необходимо, смещаем линии на образовавшееся пустое место*/
-            if (haveToShiftLinesDown)
+            if (haveToShiftLinesDown) {
                 shiftLinesDown()
-
+            }
             /* Создаём новую фигуру взамен той, которую мы перенесли*/
             spawnNewFigure(nextFigureForm)
             nextFigureForm = generateNextFigureForm()
+
+            if (isDownToBottom) {
+                soundEffects.playBlockFallEffect()
+                instance.vibrate()
+            } else {
+                soundEffects.playBlockLandingEffect()
+            }
         }
     }
 
@@ -234,6 +254,9 @@ class GameField {
             2 -> score += SCORE_FOR_DOUBLE_LINE
             3 -> score += SCORE_FOR_TRIPLE_LINE
             4 -> score += SCORE_FOR_QUADRUPLE_LINE
+        }
+        if (linesCount > 0) {
+            soundEffects.playScoreEffect()
         }
         nextLevel()
     }

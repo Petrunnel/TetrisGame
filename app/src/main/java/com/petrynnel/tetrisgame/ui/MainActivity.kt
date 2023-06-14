@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity() {
     private var mDownY = 0F
     private var gameSpeed = getField().gameSpeed
     private var job: Job? = null
+    private val soundEffects = SoundEffects()
 
     private val gestureDetector by lazy { GestureDetector(this, MyGestureDetector()) }
     private val gestureListener by lazy {
@@ -179,6 +180,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initGame() {
+        soundEffects.playMusic()
         loadField()
         if (gameField != null) isNewGame = false
         initControls()
@@ -202,6 +204,7 @@ class MainActivity : AppCompatActivity() {
             }
             /* Основной цикл игры*/
             while (!endOfGame) {
+                soundEffects.autoResume()
                 logic()
                 gameSpeed = getField().gameSpeed
                 delay(gameSpeed)
@@ -218,6 +221,7 @@ class MainActivity : AppCompatActivity() {
     private fun gameStop() {
         saveField()
         job?.cancel()
+        soundEffects.autoPause()
     }
 
     private fun gameRestart() {
@@ -232,16 +236,19 @@ class MainActivity : AppCompatActivity() {
     private fun showGameOver() {
         with(binding) {
             gameStop()
+            soundEffects.playAlertEffect()
             resetBest()
             btnPause.visibility = View.GONE
             gameOver.visibility = View.VISIBLE
             resetSavedField()
             btnRestart.setOnClickListener {
+                soundEffects.playOKEffect()
                 gameRestart()
                 btnPause.visibility = View.VISIBLE
                 gameOver.visibility = View.GONE
             }
             btnExit.setOnClickListener {
+                soundEffects.playOKEffect()
                 this@MainActivity.finish()
             }
         }
@@ -286,6 +293,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadField() {
         gameField = prefHelper.loadField()
+        gameField?.initSoundEffects()
     }
 
     private fun resetSavedField() {

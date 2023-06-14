@@ -22,7 +22,10 @@ class PreferenceHelper {
         hasShader: Boolean,
         hasShadow: Boolean,
         initialLevel: Int,
-        blockInitialLevel: Int
+        blockInitialLevel: Int,
+        hasVibration: Boolean,
+        hasSoundEffects: Boolean,
+        hasMusic: Boolean,
     ) {
         sharedPreferencesSettings.edit {
             it.putInt("background_color", backgroundColor)
@@ -31,6 +34,9 @@ class PreferenceHelper {
             it.putBoolean("has_shadow", hasShadow)
             it.putInt("initial_level", initialLevel)
             it.putInt("blocks_initial_level", blockInitialLevel)
+            it.putBoolean("has_vibration", hasVibration)
+            it.putBoolean("has_sounds_effects", hasSoundEffects)
+            it.putBoolean("has_music", hasMusic)
         }
     }
 
@@ -49,6 +55,15 @@ class PreferenceHelper {
 
     fun loadBlocksInitialLevel() =
         sharedPreferencesSettings.getInt("blocks_initial_level", DEFAULT_BLOCKS_INITIAL_LEVEL)
+
+    fun loadHasVibration() =
+        sharedPreferencesSettings.getBoolean("has_vibration", true)
+
+    fun loadHasSoundEffects() =
+        sharedPreferencesSettings.getBoolean("has_sounds_effects", true)
+
+    fun loadHasMusic() =
+        sharedPreferencesSettings.getBoolean("has_music", false)
 
     fun loadRecords(): IntArray {
         val gson = Gson()
