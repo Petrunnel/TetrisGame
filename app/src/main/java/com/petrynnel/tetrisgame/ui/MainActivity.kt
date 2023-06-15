@@ -16,7 +16,8 @@ import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_LEVEL_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_NEXT_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_SCORE_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_TEXT_X
-import com.petrynnel.tetrisgame.gamelogic.Constants.FRAMES_PER_MOVE
+import com.petrynnel.tetrisgame.gamelogic.Constants.FPS
+import com.petrynnel.tetrisgame.gamelogic.Constants.GAME_TICK_DELAY
 import kotlinx.coroutines.*
 import kotlin.math.abs
 
@@ -82,12 +83,13 @@ class MainActivity : AppCompatActivity() {
              * Т.е. 1 раз за FRAMES_PER_MOVE итераций или
              * FRAMES_PER_MOVE / BOOST_MULTIPLIER если есть запрос на ускорение падения
              */
-            if (loopNumber % (FRAMES_PER_MOVE / if (isBoostRequested) BOOST_MULTIPLIER else 1) == 0) {
+            val framesPerMove = FPS / ( DEFAULT_GAME_SPEED + getField().level )
+            if (loopNumber % (framesPerMove / if (isBoostRequested) BOOST_MULTIPLIER else 1) == 0) {
                 getField().letFallDown(isDownToBottom = false)
             }
 
             /* Увеличение номера итерации (по модулю FPM)*/
-            loopNumber = (loopNumber + 1) % FRAMES_PER_MOVE
+            loopNumber = (loopNumber + 1) % framesPerMove
 
             /* Если поле переполнено, игра закончена */
             endOfGame = endOfGame || getField().isOverfilled == true
@@ -198,7 +200,7 @@ class MainActivity : AppCompatActivity() {
             withContext(NonCancellable) {
                 CoroutineScope(Dispatchers.Main).launch {
                     if (!isNewGame) showContinueGame()
-                    else gameSpeed = DEFAULT_GAME_SPEED - getField().initialLevel
+                    else gameSpeed = DEFAULT_GAME_SPEED + getField().initialLevel
                     isNewGame = true
                 }
             }
@@ -206,8 +208,7 @@ class MainActivity : AppCompatActivity() {
             while (!endOfGame) {
                 soundEffects.autoResume()
                 logic()
-                gameSpeed = getField().gameSpeed
-                delay(gameSpeed)
+                delay(GAME_TICK_DELAY)
                 binding.canvas.invalidate()
             }
             withContext(NonCancellable) {
@@ -228,7 +229,7 @@ class MainActivity : AppCompatActivity() {
         gameStop()
         resetSavedField()
         initFields()
-        gameSpeed = DEFAULT_GAME_SPEED - prefHelper.loadInitialLevel()
+        gameSpeed = DEFAULT_GAME_SPEED + prefHelper.loadInitialLevel()
         setBest()
         gameStart()
     }

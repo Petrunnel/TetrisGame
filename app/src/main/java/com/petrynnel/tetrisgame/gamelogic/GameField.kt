@@ -271,7 +271,7 @@ class GameField {
     }
 
     private fun setGameSpeed() {
-        gameSpeed = DEFAULT_GAME_SPEED - level
+        gameSpeed = DEFAULT_GAME_SPEED + level
     }
 
     /*Если на поле есть полностю пустые линии, сдвигает вышестоящие непустые линии на их место. */

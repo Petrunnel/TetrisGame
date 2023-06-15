@@ -57,19 +57,16 @@ object Constants {
     /* Количество раз, в которое увеличивается скорость падения,
      * если пользователь нажал соответсвующую клавишу
      */
-    const val BOOST_MULTIPLIER = 5
+    const val BOOST_MULTIPLIER = 10
 
-    /* Количество клеток, на которое в секунду смещается вниз фигура*/
-    private const val MOVEDOWNS_PER_SECOND = 2
-
-    /* Количество игровых циклов в секунду*/
-    private const val FPS = 60
-
-    /* Количество игровых циклов, за которое фигура сместится вниз на одну клетку */
-    const val FRAMES_PER_MOVE = FPS / MOVEDOWNS_PER_SECOND
+    /* Задержка между тиками в игре */
+    const val GAME_TICK_DELAY = 1L
 
     /* Скорость игры по умолчанию */
-    const val DEFAULT_GAME_SPEED = 16L
+    const val DEFAULT_GAME_SPEED = 1
+
+    /* Количество игровых циклов в секунду*/
+    const val FPS = 1000
 
     /* Количество линий, заполненных блоками в начале */
     const val DEFAULT_BLOCKS_INITIAL_LEVEL = COUNT_CELLS_Y / 3
