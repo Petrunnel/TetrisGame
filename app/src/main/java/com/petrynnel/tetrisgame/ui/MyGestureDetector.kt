@@ -3,9 +3,9 @@ package com.petrynnel.tetrisgame.ui
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
-import com.petrynnel.tetrisgame.ui.MainActivity.Companion.requestDownToBottom
-import com.petrynnel.tetrisgame.ui.MainActivity.Companion.requestRotate
 import com.petrynnel.tetrisgame.gamelogic.Constants
+import com.petrynnel.tetrisgame.gamelogic.Logic.requestDownToBottom
+import com.petrynnel.tetrisgame.gamelogic.Logic.requestRotate
 import kotlin.math.abs
 
 class MyGestureDetector : GestureDetector.SimpleOnGestureListener() {

@@ -5,96 +5,32 @@ import android.os.Bundle
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup.MarginLayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.databinding.ActivityMainBinding
 import com.petrynnel.tetrisgame.gamelogic.*
-import com.petrynnel.tetrisgame.gamelogic.Constants.BOOST_MULTIPLIER
 import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_GAME_SPEED
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_LEVEL_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_NEXT_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_SCORE_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_TEXT_X
-import com.petrynnel.tetrisgame.gamelogic.Constants.FPS
 import com.petrynnel.tetrisgame.gamelogic.Constants.GAME_TICK_DELAY
+import com.petrynnel.tetrisgame.gamelogic.Logic.boostRequested
+import com.petrynnel.tetrisgame.gamelogic.Logic.getField
+import com.petrynnel.tetrisgame.gamelogic.Logic.getGameField
+import com.petrynnel.tetrisgame.gamelogic.Logic.initFields
+import com.petrynnel.tetrisgame.gamelogic.Logic.isEndOfGame
+import com.petrynnel.tetrisgame.gamelogic.Logic.isNewGame
+import com.petrynnel.tetrisgame.gamelogic.Logic.logic
+import com.petrynnel.tetrisgame.gamelogic.Logic.setGameField
+import com.petrynnel.tetrisgame.gamelogic.Logic.setNewGame
+import com.petrynnel.tetrisgame.gamelogic.Logic.setShiftDirection
+import com.petrynnel.tetrisgame.setMargin
 import kotlinx.coroutines.*
 import kotlin.math.abs
 
 @SuppressLint("ClickableViewAccessibility")
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        private var gameField: GameField? = null
-
-        private var endOfGame = false
-        private var shiftDirection: ShiftDirection? = null
-        private var isRotateRequested = false
-        private var isDownToBottomRequested = false
-        private var isBoostRequested = false
-        private var loopNumber = 0
-        private var isNewGame = true
-
-        fun requestRotate() {
-            isRotateRequested = true
-        }
-
-        fun requestDownToBottom() {
-            isDownToBottomRequested = true
-        }
-
-        fun getField(): GameField = gameField ?: GameField()
-
-        fun initFields() {
-            loopNumber = 0
-            endOfGame = false
-            shiftDirection = ShiftDirection.AWAITING
-            isRotateRequested = false
-            gameField = getField()
-        }
-
-        fun logic() {
-
-            if (shiftDirection != ShiftDirection.AWAITING) { // Если есть запрос на сдвиг фигуры
-
-                /* Пробуем сдвинуть */
-                getField().tryShiftFigure(shiftDirection)
-
-                /* Ожидаем нового запроса */
-                shiftDirection = ShiftDirection.AWAITING
-            }
-            if (isRotateRequested) { // Если есть запрос на поворот фигуры
-
-                /* Пробуем повернуть */
-                getField().tryRotateFigure()
-
-                /* Ожидаем нового запроса */
-                isRotateRequested = false
-            }
-
-            if (isDownToBottomRequested) { //Если есть запрос на мгновенное падение фигуры
-                /*Сдвигаем фигуру до низа*/
-                getField().letFallDown(isDownToBottom = true)
-                /* Ожидаем нового запроса */
-                isDownToBottomRequested = false
-            }
-
-            /* Падение фигуры вниз происходит если loopNumber % FRAMES_PER_MOVE == 0
-             * Т.е. 1 раз за FRAMES_PER_MOVE итераций или
-             * FRAMES_PER_MOVE / BOOST_MULTIPLIER если есть запрос на ускорение падения
-             */
-            val framesPerMove = FPS / ( DEFAULT_GAME_SPEED + getField().level )
-            if (loopNumber % (framesPerMove / if (isBoostRequested) BOOST_MULTIPLIER else 1) == 0) {
-                getField().letFallDown(isDownToBottom = false)
-            }
-
-            /* Увеличение номера итерации (по модулю FPM)*/
-            loopNumber = (loopNumber + 1) % framesPerMove
-
-            /* Если поле переполнено, игра закончена */
-            endOfGame = endOfGame || getField().isOverfilled == true
-        }
-    }
 
     private lateinit var binding: ActivityMainBinding
 
@@ -115,8 +51,8 @@ class MainActivity : AppCompatActivity() {
                     return@OnTouchListener true
                 }
                 MotionEvent.ACTION_UP -> {
-                    isBoostRequested = false
-                    if (!endOfGame)
+                    boostRequested(false)
+                    if (!isEndOfGame())
                         binding.canvas.invalidate()
                     return@OnTouchListener true
                 }
@@ -127,16 +63,16 @@ class MainActivity : AppCompatActivity() {
                     if (abs(deltaX) > 80 && abs(deltaY) < 160) {
                         mDownX = motionEvent.rawX
                         if (deltaX > 0) {
-                            shiftDirection = ShiftDirection.LEFT
+                            setShiftDirection(ShiftDirection.LEFT)
                             binding.canvas.invalidate()
                         }
                         if (deltaX < 0) {
-                            shiftDirection = ShiftDirection.RIGHT
+                            setShiftDirection(ShiftDirection.RIGHT)
                             binding.canvas.invalidate()
                         }
                     }
                     if (deltaY > 250) {
-                        isBoostRequested = true
+                        boostRequested(true)
                     }
                     return@OnTouchListener true
                 }
@@ -184,7 +120,7 @@ class MainActivity : AppCompatActivity() {
     private fun initGame() {
         soundEffects.playMusic()
         loadField()
-        if (gameField != null) isNewGame = false
+        if (getGameField() != null) setNewGame(false)
         initControls()
         initFields()
         binding.tvBest.setMargin(left = FIELD_TEXT_X.toInt())
@@ -199,13 +135,13 @@ class MainActivity : AppCompatActivity() {
         job = CoroutineScope(Dispatchers.IO).launch {
             withContext(NonCancellable) {
                 CoroutineScope(Dispatchers.Main).launch {
-                    if (!isNewGame) showContinueGame()
+                    if (!isNewGame()) showContinueGame()
                     else gameSpeed = DEFAULT_GAME_SPEED + getField().initialLevel
-                    isNewGame = true
+                    setNewGame(true)
                 }
             }
             /* Основной цикл игры*/
-            while (!endOfGame) {
+            while (!isEndOfGame()) {
                 soundEffects.autoResume()
                 logic()
                 delay(GAME_TICK_DELAY)
@@ -289,32 +225,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveField() {
-        prefHelper.saveField(gameField)
+        prefHelper.saveField(getGameField())
     }
 
     private fun loadField() {
-        gameField = prefHelper.loadField()
-        gameField?.initSoundEffects()
+        setGameField(prefHelper.loadField())
+        getGameField()?.initSoundEffects()
     }
 
     private fun resetSavedField() {
-        gameField = null
-        prefHelper.saveField(gameField)
-    }
-
-    private fun View.setMargin(
-        left: Int? = null,
-        top: Int? = null,
-        right: Int? = null,
-        bottom: Int? = null
-    ) {
-        val params = (layoutParams as? MarginLayoutParams)
-        params?.setMargins(
-            left ?: params.leftMargin,
-            top ?: params.topMargin,
-            right ?: params.rightMargin,
-            bottom ?: params.bottomMargin
-        )
-        layoutParams = params
+        setGameField(null)
+        prefHelper.saveField(getGameField())
     }
 }

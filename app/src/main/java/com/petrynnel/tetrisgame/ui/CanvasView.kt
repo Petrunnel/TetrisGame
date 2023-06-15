@@ -36,7 +36,7 @@ import com.petrynnel.tetrisgame.gamelogic.Coord
 import com.petrynnel.tetrisgame.gamelogic.Figure
 import com.petrynnel.tetrisgame.gamelogic.FigureColor
 import com.petrynnel.tetrisgame.gamelogic.GameField
-import com.petrynnel.tetrisgame.ui.MainActivity.Companion.getField
+import com.petrynnel.tetrisgame.gamelogic.Logic.getField
 
 class CanvasView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
