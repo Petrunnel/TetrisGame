@@ -41,8 +41,8 @@ class GridAdapter(
         private val mContext: Context,
         private val listener: OnItemClickListener
     ) : RecyclerView.ViewHolder(view) {
-        var backgroundColor: MaterialCardView = view.findViewById(R.id.cvBackgroundColor)
-        var check: MaterialCardView = view.findViewById(R.id.cvCheck)
+        private var backgroundColor: MaterialCardView = view.findViewById(R.id.cvBackgroundColor)
+        private var check: MaterialCardView = view.findViewById(R.id.cvCheck)
 
         fun bind(gameFieldBackgroundColor: GameFieldBackgroundColor, position: Int) {
             backgroundColor.setCardBackgroundColor(mContext.getColor(gameFieldBackgroundColor.color))

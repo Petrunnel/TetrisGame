@@ -5,18 +5,19 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.databinding.ActivitySettingsBinding
+import com.petrynnel.tetrisgame.gamelogic.BlockShape
 import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCK_CORNER_RADIUS_DISABLED
 import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCK_CORNER_RADIUS_HUGE
 import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCK_CORNER_RADIUS_SMALL
 import com.petrynnel.tetrisgame.gamelogic.GameFieldBackgroundColor
+import com.petrynnel.tetrisgame.isVisibleOrInvisible
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     private var backgroundColor = prefHelper.loadBackgroundColor()
-    private var cornerRadius = prefHelper.loadCornerRadius()
+    private var blockShape = prefHelper.loadBlockShape() ?: BlockShape.SQUARE
     private var hasShader = prefHelper.loadHasShader()
     private var hasShadow = prefHelper.loadHasShadow()
     private var initialLevel = prefHelper.loadInitialLevel()
@@ -25,6 +26,7 @@ class SettingsActivity : AppCompatActivity() {
     private var hasSoundEffects = prefHelper.loadHasSoundEffects()
     private var hasMusic = prefHelper.loadHasMusic()
     private var mAdapter: GridAdapter? = null
+    private var mAdapterShape: GridAdapterShape? = null
 
     private val itemOnClick = object : GridAdapter.OnItemClickListener {
         @SuppressLint("NotifyDataSetChanged")
@@ -33,6 +35,16 @@ class SettingsActivity : AppCompatActivity() {
             saveSettings()
             setBackgroundColorPreview()
             mAdapter?.notifyDataSetChanged()
+        }
+    }
+
+    private val itemShapeOnClick = object : GridAdapterShape.OnItemClickListener {
+        @SuppressLint("NotifyDataSetChanged")
+        override fun onItemClick(blockShape: BlockShape) {
+            this@SettingsActivity.blockShape = blockShape
+            saveSettings()
+            setShapePreview()
+            mAdapterShape?.notifyDataSetChanged()
         }
     }
 
@@ -64,14 +76,14 @@ class SettingsActivity : AppCompatActivity() {
     private fun saveSettings() {
         prefHelper.saveSettings(
             backgroundColor = backgroundColor,
-            cornerRadius = cornerRadius,
+            blockShape = blockShape,
             hasShader = hasShader,
             hasShadow = hasShadow,
             initialLevel = initialLevel,
             blockInitialLevel = initialBlocksLevel,
             hasVibration = hasVibration,
             hasSoundEffects = hasSoundEffects,
-            hasMusic = hasMusic
+            hasMusic = hasMusic,
         )
     }
 
@@ -93,58 +105,28 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun initBlockForm() {
         with(binding) {
-            val progress = when (cornerRadius) {
-                BLOCK_CORNER_RADIUS_DISABLED -> {
-                    cvBlockForm.radius = BLOCK_CORNER_RADIUS_DISABLED
-                    0
-                }
-                BLOCK_CORNER_RADIUS_SMALL -> {
-                    cvBlockForm.radius = BLOCK_CORNER_RADIUS_SMALL
-                    1
-                }
-                BLOCK_CORNER_RADIUS_HUGE -> {
-                    cvBlockForm.radius = BLOCK_CORNER_RADIUS_HUGE
-                    2
-                }
-                else -> 0
+            setShapePreview()
+            cvBlockShape.setOnClickListener {
+                cvBlockShapeDialog.visibility = View.VISIBLE
+                llSettings.visibility = View.INVISIBLE
             }
-            sbBlockForm.setProgress(progress, false)
-            sbBlockForm.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
-                ) {
-                    cornerRadius = when (progress) {
-                        0 -> {
-                            cvBlockForm.radius = BLOCK_CORNER_RADIUS_DISABLED
-                            BLOCK_CORNER_RADIUS_DISABLED
-                        }
-                        1 -> {
-                            cvBlockForm.radius = BLOCK_CORNER_RADIUS_SMALL
-                            BLOCK_CORNER_RADIUS_SMALL
-                        }
-                        2 -> {
-                            cvBlockForm.radius = BLOCK_CORNER_RADIUS_HUGE
-                            BLOCK_CORNER_RADIUS_HUGE
-                        }
-                        else -> BLOCK_CORNER_RADIUS_DISABLED
-                    }
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            })
+            btnCloseBlockShapeDialog.setOnClickListener {
+                cvBlockShapeDialog.visibility = View.INVISIBLE
+                llSettings.visibility = View.VISIBLE
+            }
+            mAdapterShape = GridAdapterShape(this@SettingsActivity, itemShapeOnClick)
+            rvBlockShape.adapter= mAdapterShape
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initHasShader() {
         with(binding) {
             swHasShader.isChecked = hasShader
-            vGradient.isVisible = hasShader
             swHasShader.setOnCheckedChangeListener { _, isChecked ->
                 hasShader = isChecked
-                vGradient.isVisible = isChecked
+                saveSettings()
+                mAdapterShape?.notifyDataSetChanged()
             }
         }
     }
@@ -203,6 +185,36 @@ class SettingsActivity : AppCompatActivity() {
         binding.cvBackgroundColorPreview.setCardBackgroundColor(
             this@SettingsActivity.getColor(prefHelper.loadBackgroundColor())
         )
+    }
+
+    private fun setShapePreview() {
+        with(binding) {
+            when (blockShape) {
+                BlockShape.SQUARE -> {
+                    cvBlockForm.radius = BLOCK_CORNER_RADIUS_DISABLED
+                    ivBitmap.visibility = View.INVISIBLE
+                    cvBlockForm.visibility = View.VISIBLE
+                    vGradient.isVisibleOrInvisible(hasShader)
+                }
+                BlockShape.ROUNDED_SQUARE -> {
+                    cvBlockForm.radius = BLOCK_CORNER_RADIUS_SMALL
+                    ivBitmap.visibility = View.INVISIBLE
+                    cvBlockForm.visibility = View.VISIBLE
+                    vGradient.isVisibleOrInvisible(hasShader)
+                }
+                BlockShape.CIRCLE -> {
+                    cvBlockForm.radius = BLOCK_CORNER_RADIUS_HUGE
+                    ivBitmap.visibility = View.INVISIBLE
+                    cvBlockForm.visibility = View.VISIBLE
+                    vGradient.isVisibleOrInvisible(hasShader)
+                }
+                BlockShape.BITMAP -> {
+                    cvBlockForm.radius = BLOCK_CORNER_RADIUS_DISABLED
+                    ivBitmap.visibility = View.VISIBLE
+                    vGradient.visibility = View.INVISIBLE
+                }
+            }
+        }
     }
 
     private fun initHasVibration() {

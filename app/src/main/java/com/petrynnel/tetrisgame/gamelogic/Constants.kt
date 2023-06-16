@@ -5,6 +5,12 @@ object Constants {
     /* Размер одной плитки */
     const val CELL_SIZE = 80F
 
+    /* Размер одной плитки без полей */
+    const val CELL_SIZE_NO_MARGINS = 76F
+
+    /* Разрешение картинок png для блоков */
+    const val BLOCK_SIZE_DRAWABLE = 48F
+
     /* Количество ячеек на экране по горизонтали и вертикали */
     const val COUNT_CELLS_X = 10
     const val COUNT_CELLS_Y = 2 * COUNT_CELLS_X

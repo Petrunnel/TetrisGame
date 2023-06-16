@@ -18,3 +18,7 @@ fun View.setMargin(
     )
     layoutParams = params
 }
+
+fun View.isVisibleOrInvisible(isVisible: Boolean) {
+    this.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
+}

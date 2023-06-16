@@ -3,8 +3,8 @@ package com.petrynnel.tetrisgame
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import com.petrynnel.tetrisgame.gamelogic.BlockShape
 import com.petrynnel.tetrisgame.gamelogic.Constants
-import com.petrynnel.tetrisgame.gamelogic.Constants.BLOCK_CORNER_RADIUS_DISABLED
 import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_BLOCKS_INITIAL_LEVEL
 import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_INITIAL_LEVEL
 import com.petrynnel.tetrisgame.gamelogic.GameField
@@ -18,7 +18,7 @@ class PreferenceHelper {
 
     fun saveSettings(
         backgroundColor: Int,
-        cornerRadius: Float,
+        blockShape: BlockShape,
         hasShader: Boolean,
         hasShadow: Boolean,
         initialLevel: Int,
@@ -29,7 +29,7 @@ class PreferenceHelper {
     ) {
         sharedPreferencesSettings.edit {
             it.putInt("background_color", backgroundColor)
-            it.putFloat("corner_radius", cornerRadius)
+            it.putString("block_shape", saveBlockShape(blockShape))
             it.putBoolean("has_shader", hasShader)
             it.putBoolean("has_shadow", hasShadow)
             it.putInt("initial_level", initialLevel)
@@ -43,8 +43,11 @@ class PreferenceHelper {
     fun loadBackgroundColor() =
         sharedPreferencesSettings.getInt("background_color", GameFieldBackgroundColor.BLACK.color)
 
-    fun loadCornerRadius() =
-        sharedPreferencesSettings.getFloat("corner_radius", BLOCK_CORNER_RADIUS_DISABLED)
+    fun loadBlockShape(): BlockShape? {
+        val gson = Gson()
+        val json = sharedPreferencesSettings.getString("block_shape", "")
+        return gson.fromJson(json, BlockShape::class.java)
+    }
 
     fun loadHasShader() = sharedPreferencesSettings.getBoolean("has_shader", false)
 
@@ -64,6 +67,13 @@ class PreferenceHelper {
 
     fun loadHasMusic() =
         sharedPreferencesSettings.getBoolean("has_music", false)
+
+    fun hasBitmap(): Boolean {
+        return when (loadBlockShape()) {
+            BlockShape.BITMAP -> true
+            else -> false
+        }
+    }
 
     fun loadRecords(): IntArray {
         val gson = Gson()
@@ -98,6 +108,12 @@ class PreferenceHelper {
 
     private fun sharedPrefs(name: String): SharedPreferences =
         TetrisApp.instance.getSharedPreferences(name, Context.MODE_PRIVATE)
+
+
+    private fun saveBlockShape(shape: BlockShape): String {
+        val gson = Gson()
+        return gson.toJson(shape) ?: ""
+    }
 
     private inline fun SharedPreferences.edit(operation: (SharedPreferences.Editor) -> Unit) {
         val editor = this.edit()
