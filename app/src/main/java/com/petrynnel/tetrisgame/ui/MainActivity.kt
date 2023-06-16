@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                 MotionEvent.ACTION_MOVE -> {
                     val deltaX: Float = motionEvent.rawX - mDownX
                     val deltaY: Float = motionEvent.rawY - mDownY
-                    if (abs(deltaX) > 80 && abs(deltaY) < 160) {
+                    if (abs(deltaX) > 60 && abs(deltaY) < 160) {
                         mDownX = motionEvent.rawX
                         if (deltaX > 0) {
                             setShiftDirection(ShiftDirection.LEFT)
@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun gameRestart() {
         gameStop()
-        resetSavedField()
+        resetField()
         initFields()
         gameSpeed = DEFAULT_GAME_SPEED + prefHelper.loadInitialLevel()
         setBest()
@@ -233,8 +233,12 @@ class MainActivity : AppCompatActivity() {
         getGameField()?.initSoundEffects()
     }
 
-    private fun resetSavedField() {
+    private fun resetField() {
         setGameField(null)
-        prefHelper.saveField(getGameField())
+        resetSavedField()
+    }
+
+    private fun resetSavedField() {
+        prefHelper.saveField(null)
     }
 }
