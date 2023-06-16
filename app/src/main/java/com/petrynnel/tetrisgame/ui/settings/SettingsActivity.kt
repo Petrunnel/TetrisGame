@@ -1,4 +1,4 @@
-package com.petrynnel.tetrisgame.ui
+package com.petrynnel.tetrisgame.ui.settings
 
 import android.annotation.SuppressLint
 import android.os.Bundle

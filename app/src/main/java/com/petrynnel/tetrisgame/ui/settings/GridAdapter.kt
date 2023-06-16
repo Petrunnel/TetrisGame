@@ -1,4 +1,4 @@
-package com.petrynnel.tetrisgame.ui
+package com.petrynnel.tetrisgame.ui.settings
 
 import android.content.Context
 import android.view.LayoutInflater

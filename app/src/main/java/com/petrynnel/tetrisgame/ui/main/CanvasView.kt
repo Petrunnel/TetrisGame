@@ -1,4 +1,4 @@
-package com.petrynnel.tetrisgame.ui
+package com.petrynnel.tetrisgame.ui.main
 
 import android.content.Context
 import android.graphics.*
@@ -99,8 +99,6 @@ class CanvasView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val field = getField()
-
-
 
         backgroundPaint.apply {
             style = Paint.Style.FILL

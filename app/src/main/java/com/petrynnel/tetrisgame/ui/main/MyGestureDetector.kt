@@ -1,4 +1,4 @@
-package com.petrynnel.tetrisgame.ui
+package com.petrynnel.tetrisgame.ui.main
 
 import android.util.Log
 import android.view.GestureDetector

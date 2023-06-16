@@ -1,4 +1,4 @@
-package com.petrynnel.tetrisgame.ui
+package com.petrynnel.tetrisgame.ui.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.petrynnel.tetrisgame.TetrisApp.Companion.prefHelper
 import com.petrynnel.tetrisgame.databinding.ActivityMainBinding
 import com.petrynnel.tetrisgame.gamelogic.*
-import com.petrynnel.tetrisgame.gamelogic.Constants.DEFAULT_GAME_SPEED
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_LEVEL_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_NEXT_Y
 import com.petrynnel.tetrisgame.gamelogic.Constants.FIELD_LABEL_SCORE_Y
@@ -26,6 +25,7 @@ import com.petrynnel.tetrisgame.gamelogic.Logic.setGameField
 import com.petrynnel.tetrisgame.gamelogic.Logic.setNewGame
 import com.petrynnel.tetrisgame.gamelogic.Logic.setShiftDirection
 import com.petrynnel.tetrisgame.setMargin
+import com.petrynnel.tetrisgame.ui.main.PlayPauseView.Companion.STATE_PLAY
 import kotlinx.coroutines.*
 import kotlin.math.abs
 
@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
 
     private var mDownX = 0F
     private var mDownY = 0F
-    private var gameSpeed = getField().gameSpeed
     private var job: Job? = null
     private val soundEffects = SoundEffects()
 
@@ -95,9 +94,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        if (!binding.btnPause.isPaused())
-            binding.btnPause.performClick()
+        if (!binding.btnPause.isPaused()) binding.btnPause.performClick()
         gameStop()
+        if (isEndOfGame()) resetField()
         super.onPause()
     }
 
@@ -131,12 +130,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun gameStart() {
-        binding.btnPause.setState(PlayPauseView.STATE_PLAY)
+        setStatePlay()
         job = CoroutineScope(Dispatchers.IO).launch {
             withContext(NonCancellable) {
                 CoroutineScope(Dispatchers.Main).launch {
                     if (!isNewGame()) showContinueGame()
-                    else gameSpeed = DEFAULT_GAME_SPEED + getField().initialLevel
                     setNewGame(true)
                 }
             }
@@ -147,10 +145,8 @@ class MainActivity : AppCompatActivity() {
                 delay(GAME_TICK_DELAY)
                 binding.canvas.invalidate()
             }
-            withContext(NonCancellable) {
                 CoroutineScope(Dispatchers.Main).launch {
                     showGameOver()
-                }
             }
         }
     }
@@ -165,7 +161,6 @@ class MainActivity : AppCompatActivity() {
         gameStop()
         resetField()
         initFields()
-        gameSpeed = DEFAULT_GAME_SPEED + prefHelper.loadInitialLevel()
         setBest()
         gameStart()
     }
@@ -181,7 +176,7 @@ class MainActivity : AppCompatActivity() {
             btnRestart.setOnClickListener {
                 soundEffects.playOKEffect()
                 gameRestart()
-                btnPause.visibility = View.VISIBLE
+                setStatePlay()
                 gameOver.visibility = View.GONE
             }
             btnExit.setOnClickListener {
@@ -198,20 +193,28 @@ class MainActivity : AppCompatActivity() {
             continueGame.visibility = View.VISIBLE
             btnContinue.setOnClickListener {
                 gameStart()
-                btnPause.visibility = View.VISIBLE
+                setStatePlay()
                 continueGame.visibility = View.GONE
             }
             btnNewGame.setOnClickListener {
                 resetBest()
                 gameRestart()
-                btnPause.visibility = View.VISIBLE
+                setStatePlay()
                 continueGame.visibility = View.GONE
             }
         }
     }
 
+    private fun setStatePlay() {
+        with(binding) {
+            btnPause.setState(STATE_PLAY)
+            pause.visibility = View.GONE
+            btnPause.visibility = View.VISIBLE
+        }
+    }
+
     private fun setBest() {
-        getField().best = prefHelper.loadRecords().max()
+        getField().setBest(prefHelper.loadRecords().max())
     }
 
     private fun resetBest() {
@@ -220,7 +223,7 @@ class MainActivity : AppCompatActivity() {
         if (getField().score > minBestScore && !bestScores.contains(getField().score)) {
             bestScores[bestScores.indexOf(minBestScore)] = getField().score
             prefHelper.saveRecords(bestScores)
-            getField().best = bestScores.max()
+            getField().setBest(bestScores.max())
         }
     }
 

@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000"
-    tools:context=".ui.MainActivity">
+    tools:context=".ui.main.MainActivity">
 
-    <com.petrynnel.tetrisgame.ui.CanvasView
+    <com.petrynnel.tetrisgame.ui.main.CanvasView
         android:id="@+id/canvas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
         app:layout_constraintStart_toStartOf="@+id/tvScore"
         app:layout_constraintTop_toTopOf="@+id/canvas" />
 
-    <com.petrynnel.tetrisgame.ui.PlayPauseView
+    <com.petrynnel.tetrisgame.ui.main.PlayPauseView
         android:id="@+id/btnPause"
         android:layout_width="48dp"
         android:layout_height="48dp"

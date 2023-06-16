@@ -29,12 +29,12 @@ class GameField {
         private set
 
     var best = 0
+        private set
 
     var score = 0
         private set
 
-    val initialLevel = prefHelper.loadInitialLevel()
-    var level = initialLevel
+    var level: Int
         private set
 
     var nextFigureForm: FigureForm = FigureForm.randomForm
@@ -50,12 +50,15 @@ class GameField {
             return ret
         }
 
+    private val initialLevel = prefHelper.loadInitialLevel()
+
     private val theField: Array<Array<FigureColor?>>
     private val countFilledCellsInLine: IntArray
 
     private var soundEffects: SoundEffects = SoundEffects()
 
     init {
+        level = initialLevel
         spawnNewFigure()
 
         theField = Array(COUNT_CELLS_X) {
@@ -117,6 +120,10 @@ class GameField {
 
     fun getTheField(): Array<Array<FigureColor?>> {
         return theField
+    }
+
+    fun setBest(best: Int) {
+        this.best = best
     }
 
     fun tryShiftFigure(shiftDirection: ShiftDirection?) {

@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.petrynnel.tetrisgame.databinding.ActivityStartBinding
 import com.petrynnel.tetrisgame.gamelogic.SoundEffects
+import com.petrynnel.tetrisgame.ui.main.MainActivity
+import com.petrynnel.tetrisgame.ui.settings.SettingsActivity
 
 class StartActivity : AppCompatActivity() {
 
